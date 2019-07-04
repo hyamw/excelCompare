@@ -1,0 +1,5 @@
+/.vs
+/excelCompare/bin
+/excelCompare/obj
+/packages
+*.csproj.user
