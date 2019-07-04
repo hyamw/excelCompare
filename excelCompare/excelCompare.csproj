@@ -64,7 +64,6 @@
   <ItemGroup>
     <Compile Include="CompareData.cs" />
     <Compile Include="CustomToolstripRenderer.cs" />
-    <Compile Include="DiffAnalyzer.cs" />
     <Compile Include="DiffMatchPatch.cs" />
     <Compile Include="ExcelComparer.cs" />
     <Compile Include="ExcelHelper.cs" />
@@ -85,6 +84,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RowComparer.cs" />
     <Compile Include="SheetComparer.cs" />
     <EmbeddedResource Include="FileForm.resx">
       <DependentUpon>FileForm.cs</DependentUpon>

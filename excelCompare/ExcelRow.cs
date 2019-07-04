@@ -99,5 +99,26 @@ namespace excelCompare
 
             Compile();
         }
+
+        public void GetContent(int columnCount, StringBuilder builder)
+        {
+            for (int i = 0; i < columnCount; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append(",");
+                }
+                if (i < columns.Count)
+                {
+                    builder.Append(columns[i]);
+                }
+                else
+                {
+                    builder.Append(string.Empty);
+                }
+            }
+
+            builder.AppendLine();
+        }
     }
 }

@@ -168,16 +168,16 @@ namespace excelCompare
             return success;
         }
 
-        public string GetContent()
+        public string GetContent(int columnCount)
         {
             StringBuilder builder = new StringBuilder();
             for ( int i = 0; i < _rows.Count; i++ )
             {
                 if (i > 0)
                 {
-                    builder.Append(DiffAnalyzer.LINE_SPLITTER);
+                    builder.Append(SheetComparer.LINE_SPLITTER);
                 }
-                builder.AppendLine(_rows[i].signature);
+                _rows[i].GetContent(columnCount, builder);
             }
             return builder.ToString();
         }
@@ -187,39 +187,6 @@ namespace excelCompare
             _rows[rowIndex].targetIndex = targetIndex;
             _rows[rowIndex].different = changed;
             _rowMap[targetIndex] = rowIndex;
-        }
-
-        public bool IsRowDifferent(int targetIndex)
-        {
-            int rowIndex = -1;
-            if ( _rowMap.TryGetValue(targetIndex, out rowIndex) )
-            {
-                return _rows[rowIndex].different;
-            }
-            return true;
-        }
-
-        public bool CompareCell(ExcelSheet other, int rowIndex, int columnIndex)
-        {
-            if ( IsRowDifferent(rowIndex) || other.IsRowDifferent(rowIndex) )
-            {
-                ExcelRow selfRow = GetRow(rowIndex);
-                ExcelRow otherRow = other.GetRow(rowIndex);
-                if (selfRow == null || otherRow == null)
-                {
-                    return true;
-                }
-
-                string selfCell = selfRow.GetColumn(columnIndex);
-                string otherCell = otherRow.GetColumn(columnIndex);
-                if ((selfCell == null && otherCell != null) || (selfCell != null && otherCell == null))
-                {
-                    return true;
-                }
-
-                return string.Compare(selfCell, otherCell) != 0;
-            }
-            return false;
         }
 
         private int GetRealIndex(int index)
@@ -232,63 +199,13 @@ namespace excelCompare
             return rowIndex;
         }
 
-        public ExcelRow GetRow(int rowIndex)
+        public ExcelRow GetRowByRealIndex(int rowIndex)
         {
-            int realIndex = GetRealIndex(rowIndex);
-            if ( realIndex == -1 )
+            if (rowIndex >= 0 && rowIndex < _rows.Count)
             {
-                return null;
+                return _rows[rowIndex];
             }
-            return _rows[realIndex];
-        }
-
-        public void SetDiffViewSize(int rowCount, int columnCount)
-        {
-            _diffViewRowCount = rowCount;
-            _diffViewColumnCount = columnCount;
-        }
-
-        public DataTable GenerateSource()
-        {
-            DataTable dt = new DataTable();
-            for (int j = 0; j < _diffViewColumnCount; j++)
-            {
-                dt.Columns.Add(new DataColumn(CellReference.ConvertNumToColString(j)));
-            }
-
-            int rowIndex = 0;
-            DataRow dr = null;
-            for ( int i = 0; i < _diffViewRowCount; i++ )
-            {
-                dr = dt.NewRow();
-                if (_rows.Count > rowIndex && i == _rows[rowIndex].targetIndex )
-                {
-                    for (int k = 0; k < _diffViewColumnCount; k++)
-                    {
-                        if (k < columnCount)
-                        {
-                            dr[k] = _rows[rowIndex].columns[k];
-                        }
-                        else
-                        {
-                            dr[k] = string.Empty;
-                        }
-                    }
-
-                    rowIndex++;
-                }
-                dt.Rows.Add(dr);
-            }
-            return dt;
-        }
-
-        public void PaddColumns(int columnCount)
-        {
-            _columnCount = columnCount;
-            for ( int i = 0; i < _rows.Count; i++ )
-            {
-                _rows[i].PaddColumns(columnCount);
-            }
+            return null;
         }
     }
 }

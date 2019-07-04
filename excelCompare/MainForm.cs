@@ -126,7 +126,33 @@ namespace excelCompare
 
         private void OnRowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
         {
-            e.Row.HeaderCell.Value = (e.Row.Index + 1).ToString();
+            if (e.Row.Index >= 0 && e.Row.Index < currentSheet.rowCount)
+            {
+                if (sender == leftGrid)
+                {
+                    int realIndex = currentSheet.rows[e.Row.Index].leftRowIndex;
+                    if (realIndex != -1)
+                    {
+                        e.Row.HeaderCell.Value = (realIndex + 1).ToString();
+                    }
+                    else
+                    {
+                        e.Row.HeaderCell.Value = string.Empty;
+                    }
+                }
+                else
+                {
+                    int realIndex = currentSheet.rows[e.Row.Index].rightRowIndex;
+                    if (realIndex != -1)
+                    {
+                        e.Row.HeaderCell.Value = (realIndex + 1).ToString();
+                    }
+                    else
+                    {
+                        e.Row.HeaderCell.Value = string.Empty;
+                    }
+                }
+            }
         }
 
         private void OnGridViewScroll(object sender, ScrollEventArgs e)
@@ -174,8 +200,8 @@ namespace excelCompare
             currentSheet = comparer.GetSheet(name);
             stopUpdate = true;
 
-            leftGrid.DataSource = currentSheet.left.GenerateSource();
-            rightGrid.DataSource = currentSheet.right.GenerateSource();
+            leftGrid.DataSource = currentSheet.GetLeftSource();
+            rightGrid.DataSource = currentSheet.GetRightSource();
             stopUpdate = false;
 
             lineTable = new DataTable();
@@ -285,19 +311,19 @@ namespace excelCompare
         {
             rowDiffGrid.DataSource = null;
 
-            ExcelRow leftRow = currentSheet.left.GetRow(rowIndex);
-            ExcelRow rightRow = currentSheet.right.GetRow(rowIndex);
-            int rowCount = currentSheet.columnCount;
+            ExcelRow leftRow = currentSheet.GetLeftRow(rowIndex);
+            ExcelRow rightRow = currentSheet.GetRightRow(rowIndex);
+            int columnCount = currentSheet.columnCount;
             lineTable.Rows.Clear();
             DataRow row = lineTable.NewRow();
-            for ( int i = 0; i < rowCount; i++ )
+            for ( int i = 0; i < columnCount; i++ )
             {
                 row[i] = SafeGetColumn(leftRow, i);
             }
             lineTable.Rows.Add(row);
 
             row = lineTable.NewRow();
-            for (int i = 0; i < rowCount; i++)
+            for (int i = 0; i < columnCount; i++)
             {
                 row[i] = SafeGetColumn(rightRow, i);
             }
