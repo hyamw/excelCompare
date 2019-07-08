@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,8 +45,11 @@
             this.rootSplitContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.leftGrid = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.alignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rightGrid = new System.Windows.Forms.DataGridView();
             this.rowDiffGrid = new System.Windows.Forms.DataGridView();
+            this.alignMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rootSplitContainer)).BeginInit();
@@ -56,6 +61,7 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).BeginInit();
             this.SuspendLayout();
@@ -75,28 +81,30 @@
             this.operationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.nextToolStripMenuItem,
-            this.previousToolStripMenuItem});
+            this.previousToolStripMenuItem,
+            this.alignMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
             this.operationToolStripMenuItem.Text = "操作(&T)";
+            this.operationToolStripMenuItem.DropDownOpening += new System.EventHandler(this.OnOperationDropDownOpening);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "打开(&O)";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OnOpenClicked);
             // 
             // nextToolStripMenuItem
             // 
             this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
-            this.nextToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.nextToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.nextToolStripMenuItem.Text = "下一个差异(&N)";
             // 
             // previousToolStripMenuItem
             // 
             this.previousToolStripMenuItem.Name = "previousToolStripMenuItem";
-            this.previousToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.previousToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.previousToolStripMenuItem.Text = "上一个差异(&P)";
             // 
             // toolStrip1
@@ -184,23 +192,42 @@
             this.leftGrid.AllowUserToResizeRows = false;
             this.leftGrid.BackgroundColor = System.Drawing.Color.White;
             this.leftGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.leftGrid.ContextMenuStrip = this.contextMenuStrip1;
             this.leftGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.leftGrid.Location = new System.Drawing.Point(0, 0);
             this.leftGrid.MultiSelect = false;
             this.leftGrid.Name = "leftGrid";
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.leftGrid.ReadOnly = true;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
+            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.leftGrid.RowTemplate.Height = 23;
             this.leftGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.leftGrid.Size = new System.Drawing.Size(655, 500);
             this.leftGrid.TabIndex = 0;
             this.leftGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
+            this.leftGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
             this.leftGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
+            this.leftGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
+            this.leftGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
             this.leftGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
             this.leftGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
             this.leftGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
             this.leftGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.alignToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(117, 26);
+            // 
+            // alignToolStripMenuItem
+            // 
+            this.alignToolStripMenuItem.Name = "alignToolStripMenuItem";
+            this.alignToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.alignToolStripMenuItem.Text = "对齐(&A)";
+            this.alignToolStripMenuItem.Click += new System.EventHandler(this.OnAlignMenuClicked);
             // 
             // rightGrid
             // 
@@ -209,19 +236,23 @@
             this.rightGrid.AllowUserToResizeRows = false;
             this.rightGrid.BackgroundColor = System.Drawing.Color.White;
             this.rightGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.rightGrid.ContextMenuStrip = this.contextMenuStrip1;
             this.rightGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rightGrid.Location = new System.Drawing.Point(0, 0);
             this.rightGrid.MultiSelect = false;
             this.rightGrid.Name = "rightGrid";
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            this.rightGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.rightGrid.ReadOnly = true;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
+            this.rightGrid.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.rightGrid.RowTemplate.Height = 23;
             this.rightGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.rightGrid.Size = new System.Drawing.Size(650, 500);
             this.rightGrid.TabIndex = 0;
             this.rightGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
+            this.rightGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
             this.rightGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
+            this.rightGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
             this.rightGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
             this.rightGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
             this.rightGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
@@ -232,6 +263,7 @@
             this.rowDiffGrid.AllowUserToAddRows = false;
             this.rowDiffGrid.AllowUserToDeleteRows = false;
             this.rowDiffGrid.AllowUserToResizeRows = false;
+            this.rowDiffGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.rowDiffGrid.BackgroundColor = System.Drawing.Color.White;
             this.rowDiffGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.rowDiffGrid.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -240,11 +272,21 @@
             this.rowDiffGrid.Name = "rowDiffGrid";
             this.rowDiffGrid.RowHeadersVisible = false;
             this.rowDiffGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.rowDiffGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.rowDiffGrid.RowTemplate.Height = 23;
             this.rowDiffGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.rowDiffGrid.Size = new System.Drawing.Size(1309, 86);
             this.rowDiffGrid.TabIndex = 0;
             this.rowDiffGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnRowGridCellFormatting);
+            this.rowDiffGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnRowGridCellPainting);
+            // 
+            // alignMenuItem
+            // 
+            this.alignMenuItem.Name = "alignMenuItem";
+            this.alignMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.alignMenuItem.Text = "对齐(&A)";
+            this.alignMenuItem.Click += new System.EventHandler(this.OnAlignMenuClicked);
             // 
             // MainForm
             // 
@@ -271,6 +313,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).EndInit();
             this.ResumeLayout(false);
@@ -294,6 +337,9 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView leftGrid;
         private System.Windows.Forms.DataGridView rightGrid;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem alignToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem alignMenuItem;
     }
 }
 

@@ -65,8 +65,8 @@
     <Compile Include="CompareData.cs" />
     <Compile Include="CustomToolstripRenderer.cs" />
     <Compile Include="DiffMatchPatch.cs" />
+    <Compile Include="ExcelCell.cs" />
     <Compile Include="ExcelComparer.cs" />
-    <Compile Include="ExcelHelper.cs" />
     <Compile Include="ExcelRow.cs" />
     <Compile Include="ExcelSheet.cs" />
     <Compile Include="ExcelWorkbook.cs" />
@@ -76,6 +76,9 @@
     <Compile Include="FileForm.Designer.cs">
       <DependentUpon>FileForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="IExcelCell.cs" />
+    <Compile Include="IExcelRow.cs" />
+    <Compile Include="IExcelSheet.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +89,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RowComparer.cs" />
     <Compile Include="SheetComparer.cs" />
+    <Compile Include="VRow.cs" />
+    <Compile Include="VSheet.cs" />
     <EmbeddedResource Include="FileForm.resx">
       <DependentUpon>FileForm.cs</DependentUpon>
     </EmbeddedResource>

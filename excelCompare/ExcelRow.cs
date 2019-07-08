@@ -6,21 +6,11 @@ using System.Threading.Tasks;
 
 namespace excelCompare
 {
-    public class ExcelRow
+    internal class ExcelRow : IExcelRow
     {
-        private string _fullText = string.Empty;
+        private ExcelSheet _sheet;
         private int _rowIndex = -1;
-        private List<string> _columns = new List<string>();
-        private int _targetIndex = -1;
-        private bool _different = false;
-
-        public List<string> columns
-        {
-            get
-            {
-                return _columns;
-            }
-        }
+        private List<ExcelCell> _columns = new List<ExcelCell>();
 
         public int rowIndex
         {
@@ -30,74 +20,24 @@ namespace excelCompare
             }
         }
 
-        public int targetIndex
+        public IExcelSheet sheet
         {
             get
             {
-                return _targetIndex;
-            }
-            set
-            {
-                _targetIndex = value;
+                return _sheet;
             }
         }
 
-        public bool different
+        public ExcelRow(ExcelSheet sheet, int rowIndex)
         {
-            get
-            {
-                return _different;
-            }
-            set
-            {
-                _different = value;
-            }
-        }
-
-        public string signature
-        {
-            get
-            {
-                return _fullText;
-            }
-        }
-
-        public ExcelRow(int rowIndex)
-        {
+            _sheet = sheet;
             _rowIndex = rowIndex;
         }
 
-        public void Compile()
+        internal void AddCell(ExcelCell cell)
         {
-            StringBuilder builder = new StringBuilder();
-            for ( int i = 0; i < columns.Count; i++ )
-            {
-                if ( i > 0 )
-                {
-                    builder.Append(",");
-                }
-                builder.Append(columns[i]);
-            }
-            _fullText = builder.ToString();
-        }
-
-        public string GetColumn(int index)
-        {
-            if ( index >= 0 && index < _columns.Count )
-            {
-                return _columns[index];
-            }
-            return string.Empty;
-        }
-
-        public void PaddColumns(int columnCount)
-        {
-            for ( int i = _columns.Count; i < columnCount; i++ )
-            {
-                _columns.Add(string.Empty);
-            }
-
-            Compile();
+            _columns.Add(cell);
+            System.Diagnostics.Debug.Assert(_columns.Count <= sheet.columnCount);
         }
 
         public void GetContent(int columnCount, StringBuilder builder)
@@ -108,9 +48,9 @@ namespace excelCompare
                 {
                     builder.Append(",");
                 }
-                if (i < columns.Count)
+                if (i < _columns.Count)
                 {
-                    builder.Append(columns[i]);
+                    builder.Append(_columns[i]);
                 }
                 else
                 {
@@ -119,6 +59,20 @@ namespace excelCompare
             }
 
             builder.AppendLine();
+        }
+
+        public IExcelCell GetCell(int columnIndex)
+        {
+            if (columnIndex >= 0 && columnIndex < _columns.Count)
+            {
+                return _columns[columnIndex];
+            }
+            return null;
+        }
+
+        public void BuildContent(StringBuilder builder)
+        {
+            throw new NotImplementedException();
         }
     }
 }

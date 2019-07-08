@@ -59,11 +59,11 @@ namespace excelCompare
             _isDifferent = isDifferent;
         }
 
-        public void CompareCells(int columnCount, ExcelSheet left, ExcelSheet right)
+        public void CompareCells(int columnCount, IExcelSheet left, IExcelSheet right)
         {
             _cellStatus = new bool[columnCount];
-            ExcelRow leftRow = left.GetRowByRealIndex(_leftRowIndex);
-            ExcelRow rightRow = right.GetRowByRealIndex(_rightRowIndex);
+            IExcelRow leftRow = left.GetRow(_leftRowIndex);
+            IExcelRow rightRow = right.GetRow(_rightRowIndex);
 
             if (leftRow == null || rightRow == null)
             {
@@ -76,15 +76,22 @@ namespace excelCompare
             {
                 for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
                 {
-                    string selfCell = leftRow.GetColumn(columnIndex);
-                    string otherCell = rightRow.GetColumn(columnIndex);
+                    IExcelCell selfCell = leftRow.GetCell(columnIndex);
+                    IExcelCell otherCell = rightRow.GetCell(columnIndex);
                     if ((selfCell == null && otherCell != null) || (selfCell != null && otherCell == null))
                     {
                         _cellStatus[columnIndex] = true;
                     }
                     else
                     {
-                        _cellStatus[columnIndex] = string.Compare(selfCell, otherCell) != 0;
+                        if (selfCell == null && otherCell == null)
+                        {
+                            _cellStatus[columnIndex] = false;
+                        }
+                        else
+                        {
+                            _cellStatus[columnIndex] = string.Compare(selfCell.GetContent(), otherCell.GetContent()) != 0;
+                        }
                     }
                 }
             }

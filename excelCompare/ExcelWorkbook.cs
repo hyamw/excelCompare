@@ -44,7 +44,7 @@ namespace excelCompare
                     {
                         workbook = new XSSFWorkbook(fs);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         workbook = new HSSFWorkbook(fs);
                     }

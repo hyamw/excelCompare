@@ -19,11 +19,13 @@ namespace excelCompare
         private Content rightContent = new Content();
 
         private string _name;
-        private ExcelSheet _left;
-        private ExcelSheet _right;
+        private VSheet _left;
+        private VSheet _right;
         private int _columnCount;
         private bool _isDifferent = false;
         private List<RowComparer> _rows = new List<RowComparer>();
+        private int _leftAlignIndex = -1;
+        private int _rightAlignIndex = -1;
 
         public string name
         {
@@ -33,7 +35,7 @@ namespace excelCompare
             }
         }
 
-        public ExcelSheet left
+        public VSheet left
         {
             get
             {
@@ -41,7 +43,7 @@ namespace excelCompare
             }
         }
 
-        public ExcelSheet right
+        public VSheet right
         {
             get
             {
@@ -65,14 +67,6 @@ namespace excelCompare
             }
         }
 
-        public List<RowComparer> rows
-        {
-            get
-            {
-                return _rows;
-            }
-        }
-
         public bool isDifferent
         {
             get
@@ -86,20 +80,109 @@ namespace excelCompare
             _name = name;
         }
 
-        public void Execute(ExcelSheet left, ExcelSheet right)
+        public void Execute(IExcelSheet left, IExcelSheet right, int leftAlignIndex = -1, int rightAlignIndex = -1)
         {
-            _left = left;
-            _right = right;
+            _isDifferent = false;
 
             _columnCount = Math.Max(left.columnCount, right.columnCount);
+            _left = new VSheet(left, _columnCount);
+            _right = new VSheet(right, _columnCount);
 
-            diff_match_patch comparer = new diff_match_patch();
-            string leftContent = left.GetContent(_columnCount);
-            string rightContent = right.GetContent(_columnCount);
-            List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
-            comparer.diff_cleanupSemanticLossless(diffs);
+            _leftAlignIndex = leftAlignIndex;
+            _rightAlignIndex = rightAlignIndex;
+            if (_leftAlignIndex != -1 && _rightAlignIndex != -1)
+            {
+                int beginRow = 0;
+                int endRow = 0;
+                if (_leftAlignIndex > _rightAlignIndex)
+                {
+                    endRow = _leftAlignIndex - 1;
+                    ((VSheet)_right).PadRowsAt(_rightAlignIndex, (_leftAlignIndex - _rightAlignIndex));
+                }
+                else
+                {
+                    endRow = _rightAlignIndex - 1;
+                    ((VSheet)_left).PadRowsAt(_leftAlignIndex, (_rightAlignIndex - _leftAlignIndex));
+                }
 
-            Compare(diffs);
+                leftContent.Clear();
+                rightContent.Clear();
+                {
+                    diff_match_patch comparer = new diff_match_patch();
+                    string leftContent = _left.GetContent(beginRow, endRow);
+                    string rightContent = _right.GetContent(beginRow, endRow);
+                    List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
+                    comparer.diff_cleanupSemanticLossless(diffs);
+
+                    Compare(diffs, beginRow, beginRow);
+                }
+
+                leftContent.Clear();
+                rightContent.Clear();
+                {
+                    endRow++;
+                    diff_match_patch comparer = new diff_match_patch();
+                    string leftContent = _left.GetContent(endRow, endRow);
+                    string rightContent = _right.GetContent(endRow, endRow);
+                    List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
+                    comparer.diff_cleanupSemanticLossless(diffs);
+
+                    Compare(diffs, endRow, endRow);
+                }
+
+                leftContent.Clear();
+                rightContent.Clear();
+                {
+                    endRow++;
+                    diff_match_patch comparer = new diff_match_patch();
+                    string leftContent = _left.GetContent(endRow, _left.rowCount - 1);
+                    string rightContent = _right.GetContent(endRow, _right.rowCount - 1);
+                    List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
+                    comparer.diff_cleanupSemanticLossless(diffs);
+
+                    Compare(diffs, endRow, endRow);
+                }
+            }
+            else
+            {
+
+                diff_match_patch comparer = new diff_match_patch();
+                string leftContent = _left.GetContent();
+                string rightContent = _right.GetContent();
+                List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
+                comparer.diff_cleanupSemanticLossless(diffs);
+
+                Compare(diffs, 0, 0);
+            }
+
+            VSheet leftResult = new VSheet(_left.name, _columnCount);
+            VSheet rightResult = new VSheet(_right.name, _columnCount);
+
+            List<int> deleteList = new List<int>();
+            for ( int i = 0; i < _rows.Count; i++ )
+            {
+                RowComparer row = _rows[i];
+                IExcelRow leftRow = _left.GetRow(row.leftRowIndex);
+                IExcelRow rightRow = _right.GetRow(row.rightRowIndex);
+                if (leftRow != null & rightRow != null)
+                {
+                    if ( ((VRow)leftRow).realRowIndex == -1 && ((VRow)rightRow).realRowIndex == -1 )
+                    {
+                        deleteList.Add(i);
+                        continue;
+                    }
+                }
+                leftResult.NewRow(leftRow);
+                rightResult.NewRow(rightRow);
+            }
+
+            for ( int i = deleteList.Count - 1; i >= 0; i-- )
+            {
+                _rows.RemoveAt(deleteList[i]);
+            }
+
+            _left = leftResult;
+            _right = rightResult;
         }
 
         public void Execute(ExcelWorkbook left, ExcelWorkbook right)
@@ -107,9 +190,8 @@ namespace excelCompare
             Execute(left.LoadSheet(name), right.LoadSheet(name));
         }
 
-        public void Compare(List<Diff> diffs)
+        public void Compare(List<Diff> diffs, int leftBeginRowIndex, int rightBeginRowIndex)
         {
-            _isDifferent = false;
             for (int diffIndex = 0; diffIndex < diffs.Count; diffIndex++)
             {
                 Diff diff = diffs[diffIndex];
@@ -124,17 +206,17 @@ namespace excelCompare
                         {
                             bool leftDiff = leftContent.FinishLine();
                             bool rightDiff = rightContent.FinishLine();
-                            AddRow(leftContent.LineCount - 1, rightContent.LineCount - 1, leftDiff || rightDiff);
+                            AddRow(leftBeginRowIndex + leftContent.LineCount - 1, rightBeginRowIndex + rightContent.LineCount - 1, leftDiff || rightDiff);
                         }
                         else if (diff.operation == Operation.DELETE)
                         {
                             leftContent.FinishLine();
-                            AddRow(leftContent.LineCount - 1, -1, true);
+                            AddRow(leftBeginRowIndex + leftContent.LineCount - 1, -1, true);
                         }
                         else if (diff.operation == Operation.INSERT)
                         {
                             rightContent.FinishLine();
-                            AddRow(-1, rightContent.LineCount - 1, true);
+                            AddRow(-1, rightBeginRowIndex + rightContent.LineCount - 1, true);
                         }
                     }
 
@@ -145,12 +227,12 @@ namespace excelCompare
                     }
                     else if (diff.operation == Operation.DELETE)
                     {
-                        leftContent.EnqueueLine(line, true);
+                        leftContent.EnqueueLine(line, !string.IsNullOrEmpty(line));
                         _isDifferent = true;
                     }
                     else if (diff.operation == Operation.INSERT)
                     {
-                        rightContent.EnqueueLine(line, true);
+                        rightContent.EnqueueLine(line, !string.IsNullOrEmpty(line));
                         _isDifferent = true;
                     }
                 }
@@ -175,76 +257,6 @@ namespace excelCompare
             return false;
         }
 
-        public DataTable GetLeftSource()
-        {
-            DataTable dt = new DataTable();
-            for (int j = 0; j < _columnCount; j++)
-            {
-                dt.Columns.Add(new DataColumn(CellReference.ConvertNumToColString(j)));
-            }
-
-            int rowIndex = 0;
-            DataRow dr = null;
-            for (int i = 0; i < rowCount; i++)
-            {
-                dr = dt.NewRow();
-                if (_rows[i].leftRowIndex != -1)
-                {
-                    ExcelRow row = left.GetRowByRealIndex(_rows[i].leftRowIndex);
-                    for (int k = 0; k < _columnCount; k++)
-                    {
-                        if (k < columnCount && row != null)
-                        {
-                            dr[k] = row.GetColumn(k);
-                        }
-                        else
-                        {
-                            dr[k] = string.Empty;
-                        }
-                    }
-
-                    rowIndex++;
-                }
-                dt.Rows.Add(dr);
-            }
-            return dt;
-        }
-
-        public DataTable GetRightSource()
-        {
-            DataTable dt = new DataTable();
-            for (int j = 0; j < _columnCount; j++)
-            {
-                dt.Columns.Add(new DataColumn(CellReference.ConvertNumToColString(j)));
-            }
-
-            int rowIndex = 0;
-            DataRow dr = null;
-            for (int i = 0; i < rowCount; i++)
-            {
-                dr = dt.NewRow();
-                if (_rows[i].rightRowIndex != -1)
-                {
-                    ExcelRow row = right.GetRowByRealIndex(_rows[i].rightRowIndex);
-                    for (int k = 0; k < _columnCount; k++)
-                    {
-                        if (k < columnCount && row != null)
-                        {
-                            dr[k] = row.GetColumn(k);
-                        }
-                        else
-                        {
-                            dr[k] = string.Empty;
-                        }
-                    }
-
-                    rowIndex++;
-                }
-                dt.Rows.Add(dr);
-            }
-            return dt;
-        }
-
         private void AddRow(int leftRowIndex, int rightRowIndex, bool isDifferent)
         {
             RowComparer newRow = new RowComparer(_rows.Count, leftRowIndex, rightRowIndex, isDifferent);
@@ -257,6 +269,13 @@ namespace excelCompare
             private string openEntry = null;
             private List<string> lines = new List<string>();
             private bool openDiff = false;
+
+            public void Clear()
+            {
+                openEntry = null;
+                lines.Clear();
+                openDiff = false;
+            }
 
             public void AddLine(string line)
             {
@@ -338,16 +357,6 @@ namespace excelCompare
                     return lines.Count;
                 }
             }
-        }
-
-        public ExcelRow GetLeftRow(int index)
-        {
-            return left.GetRowByRealIndex(_rows[index].leftRowIndex);
-        }
-
-        public ExcelRow GetRightRow(int index)
-        {
-            return right.GetRowByRealIndex(_rows[index].rightRowIndex);
         }
     }
 }

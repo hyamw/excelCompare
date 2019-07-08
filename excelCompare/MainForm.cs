@@ -19,6 +19,9 @@ namespace excelCompare
         private DataTable lineTable = new DataTable();
         private ExcelComparer comparer = new ExcelComparer();
         private SheetComparer currentSheet = null;
+        private int _leftAlignIndex = -1;
+        private int _rightAlignIndex = -1;
+        private DataGridView updatingGrid = null;
 
         public MainForm(string[] args)
         {
@@ -130,7 +133,7 @@ namespace excelCompare
             {
                 if (sender == leftGrid)
                 {
-                    int realIndex = currentSheet.rows[e.Row.Index].leftRowIndex;
+                    int realIndex = ((VRow)currentSheet.left.GetRow(e.Row.Index)).realRowIndex;
                     if (realIndex != -1)
                     {
                         e.Row.HeaderCell.Value = (realIndex + 1).ToString();
@@ -142,7 +145,7 @@ namespace excelCompare
                 }
                 else
                 {
-                    int realIndex = currentSheet.rows[e.Row.Index].rightRowIndex;
+                    int realIndex = ((VRow)currentSheet.right.GetRow(e.Row.Index)).realRowIndex;
                     if (realIndex != -1)
                     {
                         e.Row.HeaderCell.Value = (realIndex + 1).ToString();
@@ -169,7 +172,6 @@ namespace excelCompare
             }
         }
 
-        private DataGridView updatingGrid = null;
         private void OnGridViewSelectionChanged(object sender, EventArgs e)
         {
             if (stopUpdate || sender == updatingGrid )
@@ -195,13 +197,22 @@ namespace excelCompare
             LoadSheet(comparer.sheetNames[sheetNamesComboBox.SelectedIndex]);
         }
 
+        private void ClearAlignment()
+        {
+            leftGrid.Cursor = Cursors.Default;
+            rightGrid.Cursor = Cursors.Default;
+            _leftAlignIndex = -1;
+            _rightAlignIndex = -1;
+        }
+
         private void LoadSheet(string name)
         {
+            ClearAlignment();
             currentSheet = comparer.GetSheet(name);
             stopUpdate = true;
 
-            leftGrid.DataSource = currentSheet.GetLeftSource();
-            rightGrid.DataSource = currentSheet.GetRightSource();
+            leftGrid.DataSource = currentSheet.left.GetSource();
+            rightGrid.DataSource = currentSheet.right.GetSource();
             stopUpdate = false;
 
             lineTable = new DataTable();
@@ -214,6 +225,7 @@ namespace excelCompare
             rowDiffGrid.DataSource = lineTable;
 
             UpdateNextPreviousButton();
+            AdjustRowHeaderSize();
         }
 
         private void OnPreviousButtonClicked(object sender, EventArgs e)
@@ -294,15 +306,16 @@ namespace excelCompare
             return -1;
         }
 
-        private string SafeGetColumn(ExcelRow row, int columnIndex)
+        private string SafeGetColumn(IExcelRow row, int columnIndex)
         {
             if ( row == null )
             {
                 return string.Empty;
             }
-            if ( columnIndex < row.columns.Count )
+            IExcelCell cell = row.GetCell(columnIndex);
+            if (cell != null && cell.value != null)
             {
-                return row.columns[columnIndex];
+                return cell.value;
             }
             return string.Empty;
         }
@@ -311,8 +324,8 @@ namespace excelCompare
         {
             rowDiffGrid.DataSource = null;
 
-            ExcelRow leftRow = currentSheet.GetLeftRow(rowIndex);
-            ExcelRow rightRow = currentSheet.GetRightRow(rowIndex);
+            IExcelRow leftRow = currentSheet.left.GetRow(rowIndex);
+            IExcelRow rightRow = currentSheet.right.GetRow(rowIndex);
             int columnCount = currentSheet.columnCount;
             lineTable.Rows.Clear();
             DataRow row = lineTable.NewRow();
@@ -433,6 +446,138 @@ namespace excelCompare
                     OpenDifference();
                 }
             }
+            else
+            {
+                if ( e.KeyCode == Keys.F7 )
+                {
+                    PrepareAlignment();
+                }
+            }
+        }
+
+        private void PrepareAlignment()
+        {
+            if (leftGrid.Focused && leftGrid.SelectedCells.Count > 0)
+            {
+                _leftAlignIndex = leftGrid.SelectedCells[0].RowIndex;
+                leftGrid.Cursor = Cursors.No;
+                rightGrid.Cursor = Cursors.Help;
+            }
+            else if (rightGrid.Focused && rightGrid.SelectedCells.Count > 0)
+            {
+                _rightAlignIndex = rightGrid.SelectedCells[0].RowIndex;
+                leftGrid.Cursor = Cursors.Help;
+                rightGrid.Cursor = Cursors.No;
+            }
+        }
+
+        private void OnAlignMenuClicked(object sender, EventArgs e)
+        {
+            PrepareAlignment();
+        }
+
+        private void CompareWithAlignment()
+        {
+            leftGrid.Cursor = Cursors.Default;
+            rightGrid.Cursor = Cursors.Default;
+            SheetComparer sheetComparer = new SheetComparer(currentSheet.name);
+            sheetComparer.Execute(currentSheet.left, currentSheet.right, _leftAlignIndex, _rightAlignIndex);
+            stopUpdate = true;
+
+            currentSheet = sheetComparer;
+
+            _leftAlignIndex = -1;
+            _rightAlignIndex = -1;
+
+            leftGrid.DataSource = currentSheet.left.GetSource();
+            rightGrid.DataSource = currentSheet.right.GetSource();
+            stopUpdate = false;
+
+            lineTable = new DataTable();
+
+            for (int i = 0; i < currentSheet.columnCount; i++)
+            {
+                lineTable.Columns.Add(new DataColumn(CellReference.ConvertNumToColString(i)));
+            }
+
+            rowDiffGrid.DataSource = lineTable;
+
+            UpdateNextPreviousButton();
+        }
+
+        private void OnCellClicked(object sender, DataGridViewCellEventArgs e)
+        {
+            if ( sender == rightGrid && _leftAlignIndex != -1 )
+            {
+                _rightAlignIndex = e.RowIndex;
+
+                CompareWithAlignment();
+            }
+            else if (sender == leftGrid && _rightAlignIndex != -1)
+            {
+                _leftAlignIndex = e.RowIndex;
+
+                CompareWithAlignment();
+            }
+        }
+
+        private void OnCellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            DataGridView source = GetSource(sender);
+            if ( e.Button == MouseButtons.Right )
+            {
+                source.Rows[e.RowIndex].Cells[0].Selected = true;
+                _leftAlignIndex = e.RowIndex;
+            }
+        }
+
+        private void OnCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if ( (e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
+            {
+                if (currentSheet.IsCellDifferent(e.RowIndex, e.ColumnIndex))
+                {
+                    e.CellStyle.SelectionForeColor = DIFF_FORE_COLOR;
+                }
+                else
+                {
+                    e.CellStyle.SelectionForeColor = Color.Black;
+                }
+            }
+        }
+
+        private void OnRowGridCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if ((e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
+            {
+                if (CompareColumn(e.ColumnIndex))
+                {
+                    e.CellStyle.SelectionForeColor = DIFF_FORE_COLOR;
+                }
+                else
+                {
+                    e.CellStyle.SelectionForeColor = Color.Black;
+
+                }
+            }
+        }
+
+        private void AdjustRowHeaderSize()
+        {
+            int maxRowIndex = 0;
+            if (currentSheet != null)
+            {
+                maxRowIndex = currentSheet.rowCount;
+            }
+            Graphics graphics = leftGrid.CreateGraphics();
+            int width = (int)graphics.MeasureString(maxRowIndex.ToString(), leftGrid.Font).Width;
+            leftGrid.RowHeadersWidth = width + 35;
+            rightGrid.RowHeadersWidth = width + 35;
+        }
+
+        private void OnOperationDropDownOpening(object sender, EventArgs e)
+        {
+            alignMenuItem.Enabled = leftGrid.SelectedCells.Count > 0 || rightGrid.SelectedCells.Count > 0;
         }
     }
 }
