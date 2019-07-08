@@ -4,7 +4,6 @@
 # 效果图
 * ![截图1](https://raw.githubusercontent.com/hyamw/excelCompare/master/screenshots/1.jpg)
 ## TOTO
-1. 使用线程进行加载和对比，以及进度条显示进度
-2. ~~增加对齐功能(允许手动指定左右两边的行对齐)~~
-3. 增加合并功能
-4. 支持在比较同一个excel文件中的不同表格
+1. ~~增加对齐功能(允许手动指定左右两边的行对齐)~~
+2. 增加合并功能
+3. 支持在比较同一个excel文件中的不同表格
