@@ -14,11 +14,14 @@ namespace excelCompare
     {
         public const string LINE_SPLITTER = "=[$$]=";
 
+        public const string RETURN_PLACE_HOLDER = "=[@@]=";
+        public const string NEWLINE_PLACE_HOLDER = "=[**]=";
+        public const string RETURN_NEWLINE_PLACE_HOLDER = "=[++]=";
+
         private static readonly string[] SPLIT_SEPERATORS = new string[] { LINE_SPLITTER };
         private Content leftContent = new Content();
         private Content rightContent = new Content();
 
-        private string _name;
         private VSheet _left;
         private VSheet _right;
         private int _columnCount;
@@ -26,14 +29,6 @@ namespace excelCompare
         private List<RowComparer> _rows = new List<RowComparer>();
         private int _leftAlignIndex = -1;
         private int _rightAlignIndex = -1;
-
-        public string name
-        {
-            get
-            {
-                return _name;
-            }
-        }
 
         public VSheet left
         {
@@ -73,11 +68,6 @@ namespace excelCompare
             {
                 return _isDifferent;
             }
-        }
-
-        public SheetComparer(string name)
-        {
-            _name = name;
         }
 
         public void Execute(IExcelSheet left, IExcelSheet right, int leftAlignIndex = -1, int rightAlignIndex = -1)
@@ -183,11 +173,6 @@ namespace excelCompare
 
             _left = leftResult;
             _right = rightResult;
-        }
-
-        public void Execute(ExcelWorkbook left, ExcelWorkbook right)
-        {
-            Execute(left.LoadSheet(name), right.LoadSheet(name));
         }
 
         public void Compare(List<Diff> diffs, int leftBeginRowIndex, int rightBeginRowIndex)

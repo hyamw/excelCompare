@@ -14,6 +14,7 @@ namespace excelCompare
     {
         private IWorkbook workbook = null;
         private List<string> _sheetNames = new List<string>();
+        private Dictionary<string, ExcelSheet> _sheetMap = new Dictionary<string, ExcelSheet>();
 
         public List<string> sheetNames
         {
@@ -70,8 +71,13 @@ namespace excelCompare
             if (sheetIndex >= 0 && sheetIndex < workbook.NumberOfSheets)
             {
                 ISheet sheet = workbook.GetSheetAt(sheetIndex);
+                if (_sheetMap.ContainsKey(sheet.SheetName))
+                {
+                    return _sheetMap[sheet.SheetName];
+                }
                 ExcelSheet sheetWrapper = new ExcelSheet();
                 sheetWrapper.Load(sheet);
+                _sheetMap[sheet.SheetName] = sheetWrapper;
                 return sheetWrapper;
             }
             return new ExcelSheet();

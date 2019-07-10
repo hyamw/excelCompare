@@ -87,15 +87,15 @@ namespace excelCompare
             {
                 if (i > 0)
                 {
-                    builder.Append(",");
+                    //builder.Append(",");
                 }
                 if (i < _columns.Count)
                 {
-                    builder.Append(_columns[i].GetContent());
+                    builder.AppendLine(_columns[i].GetContent());
                 }
                 else
                 {
-                    builder.Append(string.Empty);
+                    builder.AppendLine(string.Empty);
                 }
             }
         }

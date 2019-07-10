@@ -68,7 +68,7 @@ namespace excelCompare
             for (int i = beginRow; i <= endRow; i++)
             {
                 _rows[i].BuildContent(builder);
-                builder.Append(SheetComparer.LINE_SPLITTER);
+                builder.AppendLine(SheetComparer.LINE_SPLITTER);
             }
             return builder.ToString();
         }

@@ -66,7 +66,6 @@
     <Compile Include="CustomToolstripRenderer.cs" />
     <Compile Include="DiffMatchPatch.cs" />
     <Compile Include="ExcelCell.cs" />
-    <Compile Include="ExcelComparer.cs" />
     <Compile Include="ExcelRow.cs" />
     <Compile Include="ExcelSheet.cs" />
     <Compile Include="ExcelWorkbook.cs" />

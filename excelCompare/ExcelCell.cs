@@ -11,6 +11,7 @@ namespace excelCompare
         private int _rowIndex = -1;
         private int _columnIndex = -1;
         private string _value = null;
+        private string _content = null;
 
         public int rowIndex
         {
@@ -38,11 +39,11 @@ namespace excelCompare
 
         public string GetContent()
         {
-            if (_value == null )
+            if (_content == null )
             {
                 return string.Empty;
             }
-            return _value;
+            return _content;
         }
 
         public ExcelCell(int rowIndex, int columnIndex, string value)
@@ -50,6 +51,13 @@ namespace excelCompare
             _rowIndex = rowIndex;
             _columnIndex = columnIndex;
             _value = value;
+            _content = value;
+            if ( !string.IsNullOrEmpty(_content) )
+            {
+                _content = _content.Replace("\r\n", SheetComparer.RETURN_NEWLINE_PLACE_HOLDER);
+                _content = _content.Replace("\r", SheetComparer.RETURN_PLACE_HOLDER);
+                _content = _content.Replace("\n", SheetComparer.NEWLINE_PLACE_HOLDER);
+            }
         }
 
         public ExcelCell(int rowIndex, int columnIndex)

@@ -17,7 +17,8 @@ namespace excelCompare
         private Color DIFF_FORE_COLOR = Color.FromArgb(255, 0, 0);
         private bool stopUpdate = false;
         private DataTable lineTable = new DataTable();
-        private ExcelComparer comparer = new ExcelComparer();
+        private ExcelWorkbook leftWorkbook;
+        private ExcelWorkbook rightWorkbook;
         private SheetComparer currentSheet = null;
         private int _leftAlignIndex = -1;
         private int _rightAlignIndex = -1;
@@ -26,6 +27,7 @@ namespace excelCompare
         public MainForm(string[] args)
         {
             InitializeComponent();
+            compareToolStripButton.Enabled = false;
 
             if ( args != null && args.Length >= 2 )
             {
@@ -46,7 +48,7 @@ namespace excelCompare
                 bool rightExists = File.Exists(args[1]);
                 if (leftExists && rightExists)
                 {
-                    CompareExcel(args[0], args[1]);
+                    LoadExcel(args[0], args[1]);
                 }
                 else
                 {
@@ -194,7 +196,7 @@ namespace excelCompare
 
         private void OnSheetSelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadSheet(comparer.sheetNames[sheetNamesComboBox.SelectedIndex]);
+            //LoadSheet(comparer.sheetNames[sheetNamesComboBox.SelectedIndex]);
         }
 
         private void ClearAlignment()
@@ -205,10 +207,11 @@ namespace excelCompare
             _rightAlignIndex = -1;
         }
 
-        private void LoadSheet(string name)
+        private void CompareSheet(string leftSheetName, string rightSheetName)
         {
             ClearAlignment();
-            currentSheet = comparer.GetSheet(name);
+            currentSheet = new SheetComparer();
+            currentSheet.Execute(leftWorkbook.LoadSheet(leftSheetName), rightWorkbook.LoadSheet(rightSheetName));
             stopUpdate = true;
 
             leftGrid.DataSource = currentSheet.left.GetSource();
@@ -226,6 +229,7 @@ namespace excelCompare
 
             UpdateNextPreviousButton();
             AdjustRowHeaderSize();
+            compareToolStripButton.Enabled = false;
         }
 
         private void OnPreviousButtonClicked(object sender, EventArgs e)
@@ -391,22 +395,35 @@ namespace excelCompare
             }
         }
 
-        private void CompareExcel(string leftPath, string rightPath)
+        private void LoadExcel(string leftPath, string rightPath)
         {
-            comparer.Load(leftPath, rightPath);
+            leftWorkbook = new ExcelWorkbook();
+            leftWorkbook.Load(leftPath);
 
-            sheetNamesComboBox.Items.Clear();
+            rightWorkbook = new ExcelWorkbook();
+            rightWorkbook.Load(rightPath);
 
-            for (int i = 0; i < comparer.sheetNames.Length; i++)
+            CompareSheet(leftWorkbook.sheetNames[0], rightWorkbook.sheetNames[0]);
+
+            leftComboBox.Items.Clear();
+
+            for (int i = 0; i < leftWorkbook.sheetNames.Count; i++)
             {
-                string sheetName = comparer.sheetNames[i];
-                string differentMark = comparer.GetSheet(sheetName).isDifferent ? "[*]" : string.Empty;
-                sheetNamesComboBox.Items.Add(sheetName + differentMark);
+                string sheetName = leftWorkbook.sheetNames[i];
+                leftComboBox.Items.Add(sheetName);
             }
 
-            sheetNamesComboBox.SelectedIndex = 0;
+            leftComboBox.SelectedIndex = 0;
 
-            LoadSheet(comparer.sheetNames[0]);
+            rightComboBox.Items.Clear();
+
+            for (int i = 0; i < rightWorkbook.sheetNames.Count; i++)
+            {
+                string sheetName = rightWorkbook.sheetNames[i];
+                rightComboBox.Items.Add(sheetName);
+            }
+
+            rightComboBox.SelectedIndex = 0;
         }
 
         private void OnOpenClicked(object sender, EventArgs e)
@@ -419,7 +436,7 @@ namespace excelCompare
             FileForm form = new FileForm();
             if (form.ShowDialog(this) == DialogResult.OK)
             {
-                CompareExcel(form.leftPath, form.rightPath);
+                LoadExcel(form.leftPath, form.rightPath);
             }
         }
 
@@ -480,11 +497,13 @@ namespace excelCompare
         {
             leftGrid.Cursor = Cursors.Default;
             rightGrid.Cursor = Cursors.Default;
-            SheetComparer sheetComparer = new SheetComparer(currentSheet.name);
+            SheetComparer sheetComparer = new SheetComparer();
             sheetComparer.Execute(currentSheet.left, currentSheet.right, _leftAlignIndex, _rightAlignIndex);
             stopUpdate = true;
 
             currentSheet = sheetComparer;
+
+            int visibleRow = Math.Min(_leftAlignIndex, _rightAlignIndex);
 
             _leftAlignIndex = -1;
             _rightAlignIndex = -1;
@@ -502,7 +521,14 @@ namespace excelCompare
 
             rowDiffGrid.DataSource = lineTable;
 
-            UpdateNextPreviousButton();
+            if (visibleRow != -1)
+            {
+                JumToRow(visibleRow);
+            }
+            else
+            {
+                UpdateNextPreviousButton();
+            }
         }
 
         private void OnCellClicked(object sender, DataGridViewCellEventArgs e)
@@ -578,6 +604,22 @@ namespace excelCompare
         private void OnOperationDropDownOpening(object sender, EventArgs e)
         {
             alignMenuItem.Enabled = leftGrid.SelectedCells.Count > 0 || rightGrid.SelectedCells.Count > 0;
+        }
+
+        private void OnCompareButtonClicked(object sender, EventArgs e)
+        {
+            CompareSheet(leftComboBox.SelectedItem as string, rightComboBox.SelectedItem as string);
+        }
+
+        private void OnSheetSelectionChanged(object sender, EventArgs e)
+        {
+            if (currentSheet == null)
+            {
+                return;
+            }
+            string leftName = leftComboBox.SelectedItem as string;
+            string rightName = rightComboBox.SelectedItem as string;
+            compareToolStripButton.Enabled = leftName != currentSheet.left.name || rightName != currentSheet.right.name;
         }
     }
 }
