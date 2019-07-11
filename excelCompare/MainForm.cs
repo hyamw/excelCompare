@@ -195,10 +195,10 @@ namespace excelCompare
                 ShowLineDifference(source.SelectedCells[0].RowIndex);
                 UpdateNextPreviousButton();
             }
-            UpdateCopyButton();
+            UpdateGridViewFocus();
         }
 
-        private void UpdateCopyButton()
+        private void UpdateGridViewFocus()
         {
             if (_selectedGrid != null && _selectedGrid.SelectedCells.Count > 0)
             {
@@ -206,16 +206,35 @@ namespace excelCompare
                 {
                     copyToolstripButton.Image = global::excelCompare.Properties.Resources.right;
                     copyToolstripButton.Enabled = true;
+                    copyToolstripButton.ToolTipText = "复制到右边(Ctrl+R)";
                 }
                 else
                 {
                     copyToolstripButton.Image = global::excelCompare.Properties.Resources.left;
                     copyToolstripButton.Enabled = true;
+                    copyToolstripButton.ToolTipText = "复制到左边(Ctrl+L)";
                 }
             }
             else
             {
                 copyToolstripButton.Enabled = false;
+            }
+
+            saveToolStripMenuItem.Enabled = _selectedGrid != null;
+            saveAsToolStripMenuItem.Enabled = _selectedGrid != null;
+
+            if ( _selectedGrid != null )
+            {
+                if ( _selectedGrid == leftGrid )
+                {
+                    saveToolStripMenuItem.Text = "保存(左)";
+                    saveAsToolStripMenuItem.Text = "另存为(左)";
+                }
+                else
+                {
+                    saveToolStripMenuItem.Text = "保存(右)";
+                    saveAsToolStripMenuItem.Text = "另存为(右)";
+                }
             }
         }
 
@@ -532,10 +551,6 @@ namespace excelCompare
                 {
                     SelectNextDifference();
                 }
-                else if (e.KeyCode == Keys.O)
-                {
-                    //OpenDifference();
-                }
                 else if (e.KeyCode == Keys.L)
                 {
                     Copy2Left();
@@ -543,17 +558,6 @@ namespace excelCompare
                 else if (e.KeyCode == Keys.R)
                 {
                     Copy2Right();
-                }
-                else if (e.KeyCode == Keys.S)
-                {
-                    if (leftGrid.Focused)
-                    {
-                        SaveLeft(e.Shift);
-                    }
-                    else if (rightGrid.Focused)
-                    {
-                        SaveRight(e.Shift);
-                    }
                 }
             }
             else
@@ -648,7 +652,7 @@ namespace excelCompare
                 source.Rows[e.RowIndex].Cells[0].Selected = true;
             }
             _selectedGrid = source;
-            UpdateCopyButton();
+            UpdateGridViewFocus();
         }
 
         private void OnCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -848,12 +852,12 @@ namespace excelCompare
         private void OnGridViewFocusEnter(object sender, EventArgs e)
         {
             _selectedGrid = GetSource(sender);
-            UpdateCopyButton();
+            UpdateGridViewFocus();
         }
 
         private void OnGridViewFocusLeave(object sender, EventArgs e)
         {
-            UpdateCopyButton();
+            UpdateGridViewFocus();
         }
 
         private void OnGridViewContextMenuOpening(object sender, CancelEventArgs e)
@@ -883,6 +887,43 @@ namespace excelCompare
             {
                 Copy2Left();
             }
+        }
+
+        private void OnSaveMenuClicked(object sender, EventArgs e)
+        {
+            if ( _selectedGrid == null )
+            {
+                return;
+            }
+            if ( _selectedGrid == leftGrid )
+            {
+                SaveLeft(false);
+            }
+            else
+            {
+                SaveRight(false);
+            }
+        }
+
+        private void OnSaveAsMenuClicked(object sender, EventArgs e)
+        {
+            if (_selectedGrid == null)
+            {
+                return;
+            }
+            if (_selectedGrid == leftGrid)
+            {
+                SaveLeft(true);
+            }
+            else
+            {
+                SaveRight(true);
+            }
+        }
+
+        private void OnExitMenuClicked(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

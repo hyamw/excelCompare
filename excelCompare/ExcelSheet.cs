@@ -69,6 +69,23 @@ namespace excelCompare
             return cellNum;
         }
 
+        private string GetCachedCellValue(ICell cell)
+        {
+            switch( cell.CachedFormulaResultType)
+            {
+                case CellType.Blank:
+                    return string.Empty;
+                case CellType.Boolean:
+                    return cell.BooleanCellValue.ToString();
+                case CellType.Numeric:
+                    return cell.NumericCellValue.ToString();
+                case CellType.String:
+                    return cell.StringCellValue;
+                default:
+                    return null;
+            }
+        }
+
         private string GetCellValue(ICell cell, IFormulaEvaluator evaluator)
         {
             if ( cell != null )
@@ -81,7 +98,7 @@ namespace excelCompare
                     }
                     catch(Exception)
                     {
-                        return cell.ToString();
+                        return GetCachedCellValue(cell);
                     }
                 }
                 else

@@ -30,15 +30,20 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.previousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alignMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.compareToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.previousButton = new System.Windows.Forms.ToolStripButton();
@@ -51,12 +56,12 @@
             this.leftGrid = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.alignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.leftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rightSplitContainer = new System.Windows.Forms.SplitContainer();
             this.rightComboBox = new System.Windows.Forms.ComboBox();
             this.rightGrid = new System.Windows.Forms.DataGridView();
             this.rowDiffGrid = new System.Windows.Forms.DataGridView();
-            this.leftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rootSplitContainer)).BeginInit();
@@ -97,7 +102,12 @@
             this.openToolStripMenuItem,
             this.nextToolStripMenuItem,
             this.previousToolStripMenuItem,
-            this.alignMenuItem});
+            this.alignMenuItem,
+            this.toolStripSeparator1,
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.exitToolStripMenuItem});
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
             this.operationToolStripMenuItem.Text = "操作(&T)";
@@ -107,7 +117,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.openToolStripMenuItem.Text = "打开(&O)";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OnOpenClicked);
             // 
@@ -116,25 +126,63 @@
             this.nextToolStripMenuItem.Enabled = false;
             this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
             this.nextToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.nextToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.nextToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.nextToolStripMenuItem.Text = "下一个差异";
+            this.nextToolStripMenuItem.Click += new System.EventHandler(this.OnNextButtonClicked);
             // 
             // previousToolStripMenuItem
             // 
             this.previousToolStripMenuItem.Enabled = false;
             this.previousToolStripMenuItem.Name = "previousToolStripMenuItem";
             this.previousToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.previousToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.previousToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.previousToolStripMenuItem.Text = "上一个差异";
+            this.previousToolStripMenuItem.Click += new System.EventHandler(this.OnPreviousButtonClicked);
             // 
             // alignMenuItem
             // 
             this.alignMenuItem.Enabled = false;
             this.alignMenuItem.Name = "alignMenuItem";
             this.alignMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.alignMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.alignMenuItem.Size = new System.Drawing.Size(190, 22);
             this.alignMenuItem.Text = "对齐";
             this.alignMenuItem.Click += new System.EventHandler(this.OnAlignMenuClicked);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(187, 6);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Enabled = false;
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.saveToolStripMenuItem.Text = "保存";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnSaveMenuClicked);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Enabled = false;
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.saveAsToolStripMenuItem.Text = "另存为";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.OnSaveAsMenuClicked);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(187, 6);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.exitToolStripMenuItem.Text = "退出(&E)";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnExitMenuClicked);
             // 
             // toolStrip1
             // 
@@ -157,7 +205,7 @@
             this.compareToolStripButton.Name = "compareToolStripButton";
             this.compareToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.compareToolStripButton.Text = "选择表格对比";
-            this.compareToolStripButton.ToolTipText = "选择表格对比";
+            this.compareToolStripButton.ToolTipText = "选择表格对比(F7)";
             this.compareToolStripButton.Click += new System.EventHandler(this.OnCompareButtonClicked);
             // 
             // previousButton
@@ -169,7 +217,7 @@
             this.previousButton.Name = "previousButton";
             this.previousButton.Size = new System.Drawing.Size(23, 22);
             this.previousButton.Text = "toolStripButton1";
-            this.previousButton.ToolTipText = "上一个差异";
+            this.previousButton.ToolTipText = "上一个差异(Ctrl+P)";
             this.previousButton.Click += new System.EventHandler(this.OnPreviousButtonClicked);
             // 
             // nextButton
@@ -181,7 +229,7 @@
             this.nextButton.Name = "nextButton";
             this.nextButton.Size = new System.Drawing.Size(23, 22);
             this.nextButton.Text = "Next";
-            this.nextButton.ToolTipText = "下一个差异";
+            this.nextButton.ToolTipText = "下一个差异(Ctrl+N)";
             this.nextButton.Click += new System.EventHandler(this.OnNextButtonClicked);
             // 
             // copyToolstripButton
@@ -193,6 +241,7 @@
             this.copyToolstripButton.Name = "copyToolstripButton";
             this.copyToolstripButton.Size = new System.Drawing.Size(23, 22);
             this.copyToolstripButton.Text = "复制到左边";
+            this.copyToolstripButton.ToolTipText = "复制到左边(Ctrl+L)";
             this.copyToolstripButton.Click += new System.EventHandler(this.OnCopyButtonClicked);
             // 
             // rootSplitContainer
@@ -277,9 +326,9 @@
             this.leftGrid.MultiSelect = false;
             this.leftGrid.Name = "leftGrid";
             this.leftGrid.ReadOnly = true;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.Black;
-            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
+            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.leftGrid.RowTemplate.Height = 23;
             this.leftGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.leftGrid.Size = new System.Drawing.Size(655, 471);
@@ -309,9 +358,23 @@
             // alignToolStripMenuItem
             // 
             this.alignToolStripMenuItem.Name = "alignToolStripMenuItem";
-            this.alignToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.alignToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.alignToolStripMenuItem.Text = "对齐(&A)";
             this.alignToolStripMenuItem.Click += new System.EventHandler(this.OnAlignMenuClicked);
+            // 
+            // leftToolStripMenuItem
+            // 
+            this.leftToolStripMenuItem.Name = "leftToolStripMenuItem";
+            this.leftToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.leftToolStripMenuItem.Text = "复制到左边(&L)";
+            this.leftToolStripMenuItem.Click += new System.EventHandler(this.OnCopy2LeftClicked);
+            // 
+            // rightToolStripMenuItem
+            // 
+            this.rightToolStripMenuItem.Name = "rightToolStripMenuItem";
+            this.rightToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.rightToolStripMenuItem.Text = "复制到右边(&R)";
+            this.rightToolStripMenuItem.Click += new System.EventHandler(this.OnCopy2RightClicked);
             // 
             // rightSplitContainer
             // 
@@ -358,9 +421,9 @@
             this.rightGrid.MultiSelect = false;
             this.rightGrid.Name = "rightGrid";
             this.rightGrid.ReadOnly = true;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.Black;
-            this.rightGrid.RowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            this.rightGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.rightGrid.RowTemplate.Height = 23;
             this.rightGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.rightGrid.Size = new System.Drawing.Size(650, 471);
@@ -391,28 +454,14 @@
             this.rowDiffGrid.Name = "rowDiffGrid";
             this.rowDiffGrid.RowHeadersVisible = false;
             this.rowDiffGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.rowDiffGrid.RowsDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.rowDiffGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.rowDiffGrid.RowTemplate.Height = 23;
             this.rowDiffGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.rowDiffGrid.Size = new System.Drawing.Size(1309, 86);
             this.rowDiffGrid.TabIndex = 0;
             this.rowDiffGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnRowGridCellFormatting);
             this.rowDiffGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnRowGridCellPainting);
-            // 
-            // leftToolStripMenuItem
-            // 
-            this.leftToolStripMenuItem.Name = "leftToolStripMenuItem";
-            this.leftToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.leftToolStripMenuItem.Text = "复制到左边(&L)";
-            this.leftToolStripMenuItem.Click += new System.EventHandler(this.OnCopy2LeftClicked);
-            // 
-            // rightToolStripMenuItem
-            // 
-            this.rightToolStripMenuItem.Name = "rightToolStripMenuItem";
-            this.rightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.rightToolStripMenuItem.Text = "复制到右边(&R)";
-            this.rightToolStripMenuItem.Click += new System.EventHandler(this.OnCopy2RightClicked);
             // 
             // MainForm
             // 
@@ -481,6 +530,11 @@
         private System.Windows.Forms.ToolStripButton copyToolstripButton;
         private System.Windows.Forms.ToolStripMenuItem leftToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rightToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 
