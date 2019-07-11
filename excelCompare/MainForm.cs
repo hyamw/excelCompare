@@ -515,6 +515,9 @@ namespace excelCompare
             }
 
             rightComboBox.SelectedIndex = 0;
+
+            leftFileTextBox.Text = leftPath;
+            rightFileTextBox.Text = rightPath;
         }
 
         private void OnOpenClicked(object sender, EventArgs e)
