@@ -361,7 +361,6 @@
             this.leftGrid.ContextMenuStrip = this.contextMenuStrip1;
             this.leftGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.leftGrid.Location = new System.Drawing.Point(0, 0);
-            this.leftGrid.MultiSelect = false;
             this.leftGrid.Name = "leftGrid";
             this.leftGrid.ReadOnly = true;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
@@ -484,7 +483,6 @@
             this.rightGrid.ContextMenuStrip = this.contextMenuStrip1;
             this.rightGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rightGrid.Location = new System.Drawing.Point(0, 0);
-            this.rightGrid.MultiSelect = false;
             this.rightGrid.Name = "rightGrid";
             this.rightGrid.ReadOnly = true;
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;

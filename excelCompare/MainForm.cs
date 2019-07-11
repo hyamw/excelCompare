@@ -189,7 +189,10 @@ namespace excelCompare
             {
                 updatingGrid = target;
                 target.ClearSelection();
-                target.Rows[source.SelectedCells[0].RowIndex].Cells[source.SelectedCells[0].ColumnIndex].Selected = true;
+                for (int i = 0; i < source.SelectedRows.Count; i++)
+                {
+                    target.Rows[source.SelectedRows[i].Index].Cells[0].Selected = true;
+                }
                 updatingGrid = null;
 
                 ShowLineDifference(source.SelectedCells[0].RowIndex);
@@ -569,6 +572,10 @@ namespace excelCompare
                 {
                     PrepareAlignment();
                 }
+                else if ( e.KeyCode == Keys.Escape )
+                {
+                    ClearAlignment();
+                }
             }
         }
 
@@ -576,13 +583,13 @@ namespace excelCompare
         {
             if (leftGrid.Focused && leftGrid.SelectedCells.Count > 0)
             {
-                _leftAlignIndex = leftGrid.SelectedCells[0].RowIndex;
+                _leftAlignIndex = leftGrid.CurrentCell.RowIndex;
                 leftGrid.Cursor = Cursors.No;
                 rightGrid.Cursor = Cursors.Help;
             }
             else if (rightGrid.Focused && rightGrid.SelectedCells.Count > 0)
             {
-                _rightAlignIndex = rightGrid.SelectedCells[0].RowIndex;
+                _rightAlignIndex = rightGrid.CurrentCell.RowIndex;
                 leftGrid.Cursor = Cursors.Help;
                 rightGrid.Cursor = Cursors.No;
             }
@@ -595,6 +602,7 @@ namespace excelCompare
 
         private void CompareWithAlignment()
         {
+            int leftRowIndex = leftGrid.FirstDisplayedScrollingRowIndex;
             leftGrid.Cursor = Cursors.Default;
             rightGrid.Cursor = Cursors.Default;
             SheetComparer sheetComparer = new SheetComparer();
@@ -629,6 +637,8 @@ namespace excelCompare
             {
                 UpdateNextPreviousButton();
             }
+
+            leftGrid.FirstDisplayedScrollingRowIndex = leftRowIndex;
         }
 
         private void OnCellClicked(object sender, DataGridViewCellEventArgs e)
@@ -650,9 +660,28 @@ namespace excelCompare
         private void OnCellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             DataGridView source = GetSource(sender);
+            DataGridView target = GetTarget(sender);
             if ( e.Button == MouseButtons.Right )
             {
-                source.Rows[e.RowIndex].Cells[0].Selected = true;
+                bool multiSelect = source.SelectedRows.Count > 1 || (Control.ModifierKeys & Keys.Control) == Keys.Control;
+                List<int> selectedRows = new List<int>();
+                if (multiSelect)
+                {
+                    for (int i = 0; i < source.SelectedRows.Count; i++)
+                    {
+                        selectedRows.Add(source.SelectedRows[i].Index);
+                    }
+                }
+
+                selectedRows.Add(e.RowIndex);
+                stopUpdate = true;
+                source.CurrentCell = source.Rows[e.RowIndex].Cells[0];
+                for ( int i = 0; i < selectedRows.Count; i++ )
+                {
+                    source.Rows[selectedRows[i]].Cells[0].Selected = true;
+                    target.Rows[selectedRows[i]].Cells[0].Selected = true;
+                }
+                stopUpdate = false;
             }
             _selectedGrid = source;
             UpdateGridViewFocus();
@@ -766,25 +795,39 @@ namespace excelCompare
 
         private void Copy2Left()
         {
-            if ( rightGrid.SelectedCells.Count > 0 )
+            if ( rightGrid.SelectedRows.Count > 0 )
             {
                 int firstRowIndex = rightGrid.FirstDisplayedScrollingRowIndex;
-                int rowIndex = rightGrid.SelectedCells[0].RowIndex;
-                currentSheet.Copy2Left(rowIndex);
-                VRow row = currentSheet.left.GetRow(rowIndex) as VRow;
-
                 DataTable table = leftGrid.DataSource as DataTable;
-                DataRow dataRow = table.Rows[rowIndex];
-                dataRow.BeginEdit();
-                for ( int i = 0; i < table.Columns.Count; i++ )
+                List<int> selectionList = new List<int>();
+                for ( int selectionIndex = 0; selectionIndex < rightGrid.SelectedRows.Count; selectionIndex++ )
                 {
-                    IExcelCell cell = row.GetCell(i);
-                    dataRow[i] = cell != null ? cell.value : string.Empty;
+                    int rowIndex = rightGrid.SelectedRows[selectionIndex].Index;
+                    currentSheet.Copy2Left(rowIndex);
+                    VRow row = currentSheet.left.GetRow(rowIndex) as VRow;
+
+                    DataRow dataRow = table.Rows[rowIndex];
+                    dataRow.BeginEdit();
+                    for (int i = 0; i < table.Columns.Count; i++)
+                    {
+                        IExcelCell cell = row.GetCell(i);
+                        dataRow[i] = cell != null ? cell.value : string.Empty;
+                    }
+                    dataRow.EndEdit();
+                    selectionList.Add(rowIndex);
                 }
-                dataRow.EndEdit();
                 table.AcceptChanges();
 
                 rightGrid.FirstDisplayedScrollingRowIndex = firstRowIndex;
+
+                stopUpdate = true;
+                leftGrid.ClearSelection();
+                for ( int i = 0; i < selectionList.Count; i++ )
+                {
+                    rightGrid.Rows[selectionList[i]].Cells[0].Selected = true;
+                    leftGrid.Rows[selectionList[i]].Cells[0].Selected = true;
+                }
+                stopUpdate = false;
             }
         }
 
@@ -793,21 +836,35 @@ namespace excelCompare
             if (leftGrid.SelectedCells.Count > 0)
             {
                 int firstRowIndex = leftGrid.FirstDisplayedScrollingRowIndex;
-                int rowIndex = leftGrid.SelectedCells[0].RowIndex;
-                currentSheet.Copy2Right(rowIndex);
-                VRow row = currentSheet.right.GetRow(rowIndex) as VRow;
-
                 DataTable table = rightGrid.DataSource as DataTable;
-                DataRow dataRow = table.Rows[rowIndex];
-                dataRow.BeginEdit();
-                for (int i = 0; i < table.Columns.Count; i++)
+                List<int> selectionList = new List<int>();
+                for (int selectionIndex = 0; selectionIndex < leftGrid.SelectedRows.Count; selectionIndex++)
                 {
-                    IExcelCell cell = row.GetCell(i);
-                    dataRow[i] = cell != null ? cell.value : string.Empty;
+                    int rowIndex = leftGrid.SelectedRows[selectionIndex].Index;
+                    currentSheet.Copy2Right(rowIndex);
+                    VRow row = currentSheet.right.GetRow(rowIndex) as VRow;
+
+                    DataRow dataRow = table.Rows[rowIndex];
+                    dataRow.BeginEdit();
+                    for (int i = 0; i < table.Columns.Count; i++)
+                    {
+                        IExcelCell cell = row.GetCell(i);
+                        dataRow[i] = cell != null ? cell.value : string.Empty;
+                    }
+                    dataRow.EndEdit();
+                    selectionList.Add(rowIndex);
                 }
-                dataRow.EndEdit();
                 table.AcceptChanges();
                 leftGrid.FirstDisplayedScrollingRowIndex = firstRowIndex;
+
+                stopUpdate = true;
+                rightGrid.ClearSelection();
+                for (int i = 0; i < selectionList.Count; i++)
+                {
+                    leftGrid.Rows[selectionList[i]].Cells[0].Selected = true;
+                    rightGrid.Rows[selectionList[i]].Cells[0].Selected = true;
+                }
+                stopUpdate = false;
             }
         }
 

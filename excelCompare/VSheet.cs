@@ -198,6 +198,16 @@ namespace excelCompare
                 if ( row.realRowIndex != -1 || row.targetRowIndex != -1 )
                 {
                     IRow sheetRow = null;
+                    if (row.realRowIndex != -1 && row.changed && row.targetRowIndex == -1)
+                    {
+                        sheetRow = sheet.GetRow(realRowIndex);
+                        if (sheetRow != null)
+                        {
+                            int lastRowIndex = sheet.LastRowNum;
+                            sheet.ShiftRows(realRowIndex + 1, sheet.LastRowNum, -1, true, false);
+                        }
+                        continue;
+                    }
                     if (realRowIndex <= sheet.LastRowNum && row.realRowIndex != -1 )
                     {
                         sheetRow = sheet.GetRow(realRowIndex);

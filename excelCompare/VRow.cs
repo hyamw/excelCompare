@@ -13,6 +13,7 @@ namespace excelCompare
         private int _realRowIndex = -1;
         private List<IExcelCell> _columns = new List<IExcelCell>();
         private int _targetRowIndex = -1;
+        private bool _changed = false;
 
         public IExcelSheet sheet
         {
@@ -43,6 +44,14 @@ namespace excelCompare
             get
             {
                 return _targetRowIndex;
+            }
+        }
+
+        public bool changed
+        {
+            get
+            {
+                return _changed;
             }
         }
 
@@ -124,6 +133,7 @@ namespace excelCompare
             VRow row = other as VRow;
             _targetRowIndex = row.realRowIndex;
             _columns.Clear();
+            _changed = true;
 
             for (int columnIndex = 0; columnIndex < sheet.columnCount; columnIndex++)
             {
