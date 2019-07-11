@@ -12,6 +12,7 @@ namespace excelCompare
         private int _rowIndex = -1;
         private int _realRowIndex = -1;
         private List<IExcelCell> _columns = new List<IExcelCell>();
+        private int _targetRowIndex = -1;
 
         public IExcelSheet sheet
         {
@@ -37,6 +38,14 @@ namespace excelCompare
             }
         }
 
+        public int targetRowIndex
+        {
+            get
+            {
+                return _targetRowIndex;
+            }
+        }
+
         public VRow(VSheet sheet, int rowIndex, IExcelRow referenceRow)
         {
             _sheet = sheet;
@@ -48,6 +57,7 @@ namespace excelCompare
                 {
                     VRow row = referenceRow as VRow;
                     _realRowIndex = row.realRowIndex;
+                    _targetRowIndex = row.targetRowIndex;
                 }
                 else
                 {
@@ -65,7 +75,7 @@ namespace excelCompare
                     }
                     else
                     {
-                        newCell = new ExcelCell(_rowIndex, columnIndex, cell.value);
+                        newCell = new ExcelCell(_rowIndex, columnIndex, cell.cellType, cell.value);
                     }
 
                     _columns.Add(newCell);
@@ -107,6 +117,29 @@ namespace excelCompare
                 return _columns[columnIndex];
             }
             return null;
+        }
+
+        public void CopyFrom(IExcelRow other)
+        {
+            VRow row = other as VRow;
+            _targetRowIndex = row.realRowIndex;
+            _columns.Clear();
+
+            for (int columnIndex = 0; columnIndex < sheet.columnCount; columnIndex++)
+            {
+                IExcelCell cell = row.GetCell(columnIndex);
+                IExcelCell newCell = null;
+                if (cell == null)
+                {
+                    newCell = new ExcelCell(_rowIndex, columnIndex);
+                }
+                else
+                {
+                    newCell = new ExcelCell(_rowIndex, columnIndex, cell.cellType, cell.value);
+                }
+
+                _columns.Add(newCell);
+            }
         }
     }
 }

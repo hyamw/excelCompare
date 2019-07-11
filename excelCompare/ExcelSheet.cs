@@ -75,7 +75,14 @@ namespace excelCompare
             {
                 if ( cell.CellType == CellType.Formula )
                 {
-                    return evaluator.Evaluate(cell).FormatAsString();
+                    try
+                    {
+                        return evaluator.Evaluate(cell).FormatAsString();
+                    }
+                    catch(Exception)
+                    {
+                        return cell.ToString();
+                    }
                 }
                 else
                 {
@@ -83,6 +90,15 @@ namespace excelCompare
                 }
             }
             return null;
+        }
+
+        private CellType GetCellType(ICell cell)
+        {
+            if (cell != null)
+            {
+                return cell.CellType;
+            }
+            return CellType.Blank;
         }
 
         public bool Load(ISheet sheet)
@@ -101,14 +117,14 @@ namespace excelCompare
                     for (int k = 0; k < columnCount; k++)
                     {
                         ICell cell = row.GetCell(k);
-                        newRow.AddCell(new ExcelCell(rowIndex, k, GetCellValue(cell, evaluator)));
+                        newRow.AddCell(new ExcelCell(rowIndex, k, GetCellType(cell), GetCellValue(cell, evaluator)));
                     }
                 }
                 else
                 {
                     for (int k = 0; k < columnCount; k++)
                     {
-                        newRow.AddCell(new ExcelCell(rowIndex, k, null));
+                        newRow.AddCell(new ExcelCell(rowIndex, k, CellType.Blank, null));
                     }
                 }
                 _rows.Add(newRow);

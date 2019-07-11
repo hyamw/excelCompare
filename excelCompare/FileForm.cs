@@ -13,6 +13,12 @@ namespace excelCompare
 {
     public partial class FileForm : Form
     {
+        public const string FILE_FILTER = "所有Excel文件(*.xls;*.xlsx)|*.xls;*.xlsx|Excel工作簿(*.xlsx)|*.xlsx|Excel 97-2003 工作簿(*.xls)|*.xls";
+        private static readonly string[] FILTER_NAMES = new string[]
+        {
+            ".xlsx",
+            ".xls"
+        };
         public string leftPath
         {
             get
@@ -37,7 +43,7 @@ namespace excelCompare
         private void OnBrowseLeftButtonClicked(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "所有Excel文件(*.xls;*.xlsx)|*.xls;*.xlsx|Excel工作簿(*.xls)|*.xlsx|Excel 97-2003 工作簿(*.xls)|*.xls";
+            dialog.Filter = FILE_FILTER;
             if ( dialog.ShowDialog(this) == DialogResult.OK )
             {
                 leftTextBox.Text = dialog.FileName;
@@ -48,7 +54,7 @@ namespace excelCompare
         private void OnBrowseRightButtonClicked(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "所有Excel文件(*.xls;*.xlsx)|*.xls;*.xlsx|Excel工作簿(*.xls)|*.xlsx|Excel 97-2003 工作簿(*.xls)|*.xls";
+            dialog.Filter = FILE_FILTER;
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 rightTextBox.Text = dialog.FileName;
@@ -73,6 +79,19 @@ namespace excelCompare
             }
 
             okButton.Enabled = allowStart;
+        }
+
+        public static int GetFilterIndex(string name)
+        {
+            string extension = Path.GetExtension(name).ToLower();
+            for ( int i = 0; i < FILTER_NAMES.Length; i++ )
+            {
+                if ( FILTER_NAMES[i].CompareTo(extension) == 0 )
+                {
+                    return i + 2;
+                }
+            }
+            return 0;
         }
     }
 }

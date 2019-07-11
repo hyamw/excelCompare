@@ -12,6 +12,7 @@ namespace excelCompare
 {
     internal class ExcelWorkbook
     {
+        private string _filePath = string.Empty;
         private IWorkbook workbook = null;
         private List<string> _sheetNames = new List<string>();
         private Dictionary<string, ExcelSheet> _sheetMap = new Dictionary<string, ExcelSheet>();
@@ -24,10 +25,19 @@ namespace excelCompare
             }
         }
 
+        public string filePath
+        {
+            get
+            {
+                return _filePath;
+            }
+        }
+
         public void Load(string filePath)
         {
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
+                _filePath = filePath;
                 if (filePath.Last() == 's')
                 {
                     try
@@ -81,6 +91,29 @@ namespace excelCompare
                 return sheetWrapper;
             }
             return new ExcelSheet();
+        }
+
+        public void SaveSheet(VSheet sheet, string outputPath = null)
+        {
+            int sheetIndex = workbook.GetSheetIndex(sheet.name);
+            if (sheetIndex == -1)
+            {
+                return;
+            }
+            ISheet worksheet = workbook.GetSheetAt(sheetIndex);
+            if (worksheet != null)
+            {
+                sheet.Save(worksheet);
+            }
+
+            if ( string.IsNullOrEmpty(outputPath) )
+            {
+                outputPath = _filePath;
+            }
+            using (FileStream fs = File.OpenWrite(outputPath))
+            {
+                workbook.Write(fs);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.SS.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,9 +37,23 @@ namespace excelCompare
         }
 
         /// <summary>
+        /// 单元格类型
+        /// </summary>
+        CellType cellType
+        {
+            get;
+        }
+
+        /// <summary>
         /// 返回用于比较的字符串
         /// </summary>
         /// <returns></returns>
         string GetContent();
+
+        /// <summary>
+        /// 将内容保存到Excel单元格对象中
+        /// </summary>
+        /// <param name="cell"></param>
+        void Save(ICell cell);
     }
 }

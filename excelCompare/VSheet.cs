@@ -1,4 +1,5 @@
-﻿using NPOI.SS.Util;
+﻿using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +14,7 @@ namespace excelCompare
         private string _name = string.Empty;
         private List<IExcelRow> _rows = new List<IExcelRow>();
         private int _columnCount = 0;
+        private Dictionary<int, IExcelRow> _realRowMap = new Dictionary<int, IExcelRow>();
 
         /// <summary>
         /// 返回当前表格的名字
@@ -97,7 +99,12 @@ namespace excelCompare
             _columnCount = columnCount;
             for ( int i = 0; i < sheet.rowCount; i++ )
             {
-                _rows.Add(new VRow(this, i, sheet.GetRow(i)));
+                VRow row = new VRow(this, i, sheet.GetRow(i));
+                _rows.Add(row);
+                if (row.realRowIndex != -1)
+                {
+                    _realRowMap.Add(row.realRowIndex, row);
+                }
             }
         }
 
@@ -124,21 +131,14 @@ namespace excelCompare
         /// 增加一个新的行
         /// </summary>
         /// <returns></returns>
-        internal VRow NewRow()
-        {
-            VRow row = new VRow(this, _rows.Count, null);
-            _rows.Add(row);
-            return row;
-        }
-
-        /// <summary>
-        /// 增加一个新的行
-        /// </summary>
-        /// <returns></returns>
         internal VRow NewRow(IExcelRow referenceRow)
         {
             VRow row = new VRow(this, _rows.Count, referenceRow);
             _rows.Add(row);
+            if ( row.realRowIndex != -1 )
+            {
+                _realRowMap.Add(row.realRowIndex, row);
+            }
             return row;
         }
 
@@ -175,6 +175,64 @@ namespace excelCompare
                 dt.Rows.Add(dr);
             }
             return dt;
+        }
+
+        /// <summary>
+        /// 根据实际的行号获取行对象
+        /// </summary>
+        /// <param name="realRowIndex"></param>
+        /// <returns></returns>
+        public IExcelRow GetRowByRealIndex(int realRowIndex)
+        {
+            IExcelRow row = null;
+            _realRowMap.TryGetValue(realRowIndex, out row);
+            return row;
+        }
+
+        public void Save(ISheet sheet)
+        {
+            int realRowIndex = 0;
+            for ( int rowIndex = 0; rowIndex < _rows.Count; rowIndex++ )
+            {
+                VRow row = _rows[rowIndex] as VRow;
+                if ( row.realRowIndex != -1 || row.targetRowIndex != -1 )
+                {
+                    IRow sheetRow = null;
+                    if (realRowIndex <= sheet.LastRowNum && row.realRowIndex != -1 )
+                    {
+                        sheetRow = sheet.GetRow(realRowIndex);
+                    }
+                    else
+                    {
+                        sheet.ShiftRows(realRowIndex, sheet.LastRowNum, 1, true, false);
+                        sheetRow = sheet.CreateRow(realRowIndex);
+                        //sheetRow = sheet.GetRow(realRowIndex);
+                    }
+
+                    int lastCellIndex = sheetRow.LastCellNum;
+                    for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
+                    {
+                        IExcelCell cell = row.GetCell(columnIndex);
+                        ICell sheetCell = sheetRow.GetCell(columnIndex);
+                        if (cell != null && cell.value != null)
+                        { 
+                            if (sheetCell == null)
+                            {
+                                sheetCell = sheetRow.CreateCell(columnIndex);
+                            }
+                            sheetCell.SetCellValue(cell.value);
+                        }
+                        else
+                        {
+                            if (sheetCell != null)
+                            {
+                                sheetRow.RemoveCell(sheetCell);
+                            }
+                        }
+                    }
+                    realRowIndex++;
+                }
+            }
         }
     }
 }

@@ -124,5 +124,11 @@
   <ItemGroup>
     <None Include="res\up_disabled.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="res\right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\left.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

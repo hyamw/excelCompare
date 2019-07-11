@@ -61,6 +61,7 @@ namespace excelCompare
 
         public void CompareCells(int columnCount, IExcelSheet left, IExcelSheet right)
         {
+            _isDifferent = false;
             _cellStatus = new bool[columnCount];
             IExcelRow leftRow = left.GetRow(_leftRowIndex);
             IExcelRow rightRow = right.GetRow(_rightRowIndex);
@@ -93,6 +94,15 @@ namespace excelCompare
                             _cellStatus[columnIndex] = string.Compare(selfCell.GetContent(), otherCell.GetContent()) != 0;
                         }
                     }
+                }
+            }
+
+            for ( int i = 0; i < _cellStatus.Length; i++ )
+            {
+                if (_cellStatus[i])
+                {
+                    _isDifferent = true;
+                    break;
                 }
             }
         }

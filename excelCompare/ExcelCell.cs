@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NPOI.SS.UserModel;
 
 namespace excelCompare
 {
@@ -12,6 +13,7 @@ namespace excelCompare
         private int _columnIndex = -1;
         private string _value = null;
         private string _content = null;
+        private CellType _cellType = CellType.Blank;
 
         public int rowIndex
         {
@@ -37,6 +39,14 @@ namespace excelCompare
             }
         }
 
+        public CellType cellType
+        {
+            get
+            {
+                return _cellType;
+            }
+        }
+
         public string GetContent()
         {
             if (_content == null )
@@ -46,12 +56,13 @@ namespace excelCompare
             return _content;
         }
 
-        public ExcelCell(int rowIndex, int columnIndex, string value)
+        public ExcelCell(int rowIndex, int columnIndex, CellType cellType, string value)
         {
             _rowIndex = rowIndex;
             _columnIndex = columnIndex;
             _value = value;
             _content = value;
+            _cellType = cellType;
             if ( !string.IsNullOrEmpty(_content) )
             {
                 _content = _content.Replace("\r\n", SheetComparer.RETURN_NEWLINE_PLACE_HOLDER);
@@ -64,6 +75,12 @@ namespace excelCompare
         {
             _rowIndex = rowIndex;
             _columnIndex = columnIndex;
+            _cellType = CellType.Blank;
+        }
+
+        public void Save(ICell cell)
+        {
+            cell.SetCellValue(value);
         }
     }
 }

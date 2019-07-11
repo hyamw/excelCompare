@@ -1,4 +1,5 @@
-﻿using NPOI.SS.Util;
+﻿using DiffMatchPatch;
+using NPOI.SS.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,8 @@ namespace excelCompare
         private int _leftAlignIndex = -1;
         private int _rightAlignIndex = -1;
         private DataGridView updatingGrid = null;
+        private Dictionary<string, bool> _sheetDifferences = new Dictionary<string, bool>();
+        private DataGridView _selectedGrid = null;
 
         public MainForm(string[] args)
         {
@@ -191,6 +194,28 @@ namespace excelCompare
 
                 ShowLineDifference(source.SelectedCells[0].RowIndex);
                 UpdateNextPreviousButton();
+            }
+            UpdateCopyButton();
+        }
+
+        private void UpdateCopyButton()
+        {
+            if (_selectedGrid != null && _selectedGrid.SelectedCells.Count > 0)
+            {
+                if (_selectedGrid == leftGrid)
+                {
+                    copyToolstripButton.Image = global::excelCompare.Properties.Resources.right;
+                    copyToolstripButton.Enabled = true;
+                }
+                else
+                {
+                    copyToolstripButton.Image = global::excelCompare.Properties.Resources.left;
+                    copyToolstripButton.Enabled = true;
+                }
+            }
+            else
+            {
+                copyToolstripButton.Enabled = false;
             }
         }
 
@@ -395,6 +420,51 @@ namespace excelCompare
             }
         }
 
+        private void GetSummary()
+        {
+            _sheetDifferences.Clear();
+            for (int i = 0; i < leftWorkbook.sheetNames.Count; i++)
+            {
+                string sheetName = leftWorkbook.sheetNames[i];
+                if (rightWorkbook.sheetNames.Contains(sheetName))
+                {
+                    ExcelSheet leftExcelSheet = leftWorkbook.LoadSheet(sheetName);
+                    ExcelSheet rightExcelSheet = rightWorkbook.LoadSheet(sheetName);
+                    int columnCount = Math.Max(leftExcelSheet.columnCount, rightExcelSheet.columnCount);
+                    VSheet leftSheet = new VSheet(leftExcelSheet, columnCount);
+                    VSheet rightSheet = new VSheet(rightExcelSheet, columnCount);
+
+                    diff_match_patch comparer = new diff_match_patch();
+                    string leftContent = leftSheet.GetContent();
+                    string rightContent = rightSheet.GetContent();
+                    List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
+                    comparer.diff_cleanupSemanticLossless(diffs);
+
+                    bool isDifferent = false;
+                    for ( int diffIndex = 0; diffIndex < diffs.Count; diffIndex++ )
+                    {
+                        if (diffs[diffIndex].operation != Operation.EQUAL)
+                        {
+                            isDifferent = true;
+                            break;
+                        }
+                    }
+
+                    _sheetDifferences.Add(sheetName, isDifferent);
+                }
+            }
+        }
+
+        private bool IsSheetDifferent(string name)
+        {
+            bool different = false;
+            if ( !_sheetDifferences.TryGetValue(name, out different) )
+            {
+                different = false;
+            }
+            return different;
+        }
+
         private void LoadExcel(string leftPath, string rightPath)
         {
             leftWorkbook = new ExcelWorkbook();
@@ -403,6 +473,8 @@ namespace excelCompare
             rightWorkbook = new ExcelWorkbook();
             rightWorkbook.Load(rightPath);
 
+            GetSummary();
+
             CompareSheet(leftWorkbook.sheetNames[0], rightWorkbook.sheetNames[0]);
 
             leftComboBox.Items.Clear();
@@ -410,7 +482,7 @@ namespace excelCompare
             for (int i = 0; i < leftWorkbook.sheetNames.Count; i++)
             {
                 string sheetName = leftWorkbook.sheetNames[i];
-                leftComboBox.Items.Add(sheetName);
+                leftComboBox.Items.Add(sheetName + (IsSheetDifferent(sheetName) ? " *" : string.Empty));
             }
 
             leftComboBox.SelectedIndex = 0;
@@ -420,7 +492,7 @@ namespace excelCompare
             for (int i = 0; i < rightWorkbook.sheetNames.Count; i++)
             {
                 string sheetName = rightWorkbook.sheetNames[i];
-                rightComboBox.Items.Add(sheetName);
+                rightComboBox.Items.Add(sheetName + (IsSheetDifferent(sheetName) ? " *" : string.Empty));
             }
 
             rightComboBox.SelectedIndex = 0;
@@ -444,6 +516,8 @@ namespace excelCompare
         {
             nextButton.Enabled = GetNextDifferenctRowIndex() != -1;
             previousButton.Enabled = GetPreviousDifferenctRowIndex() != -1;
+            nextToolStripMenuItem.Enabled = GetNextDifferenctRowIndex() != -1;
+            previousToolStripMenuItem.Enabled = GetPreviousDifferenctRowIndex() != -1;
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -460,7 +534,26 @@ namespace excelCompare
                 }
                 else if (e.KeyCode == Keys.O)
                 {
-                    OpenDifference();
+                    //OpenDifference();
+                }
+                else if (e.KeyCode == Keys.L)
+                {
+                    Copy2Left();
+                }
+                else if (e.KeyCode == Keys.R)
+                {
+                    Copy2Right();
+                }
+                else if (e.KeyCode == Keys.S)
+                {
+                    if (leftGrid.Focused)
+                    {
+                        SaveLeft(e.Shift);
+                    }
+                    else if (rightGrid.Focused)
+                    {
+                        SaveRight(e.Shift);
+                    }
                 }
             }
             else
@@ -553,8 +646,9 @@ namespace excelCompare
             if ( e.Button == MouseButtons.Right )
             {
                 source.Rows[e.RowIndex].Cells[0].Selected = true;
-                _leftAlignIndex = e.RowIndex;
             }
+            _selectedGrid = source;
+            UpdateCopyButton();
         }
 
         private void OnCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -608,7 +702,34 @@ namespace excelCompare
 
         private void OnCompareButtonClicked(object sender, EventArgs e)
         {
-            CompareSheet(leftComboBox.SelectedItem as string, rightComboBox.SelectedItem as string);
+            int leftSelectionIndex = leftComboBox.SelectedIndex;
+            int rightSelectionIndex = rightComboBox.SelectedIndex;
+            if (leftSelectionIndex == -1 || rightSelectionIndex == -1)
+            {
+                return;
+            }
+
+            CompareSheet(leftWorkbook.sheetNames[leftSelectionIndex], rightWorkbook.sheetNames[rightSelectionIndex]);
+        }
+
+        private string GetLeftSheetName()
+        {
+            string sheetName = string.Empty;
+            if (leftWorkbook != null && leftComboBox.SelectedIndex >= 0 && leftComboBox.SelectedIndex < leftWorkbook.sheetNames.Count)
+            {
+                sheetName = leftWorkbook.sheetNames[leftComboBox.SelectedIndex];
+            }
+            return sheetName;
+        }
+
+        private string GetRightSheetName()
+        {
+            string sheetName = string.Empty;
+            if (rightWorkbook != null && rightComboBox.SelectedIndex >= 0 && rightComboBox.SelectedIndex < rightWorkbook.sheetNames.Count)
+            {
+                sheetName = rightWorkbook.sheetNames[rightComboBox.SelectedIndex];
+            }
+            return sheetName;
         }
 
         private void OnSheetSelectionChanged(object sender, EventArgs e)
@@ -617,9 +738,151 @@ namespace excelCompare
             {
                 return;
             }
-            string leftName = leftComboBox.SelectedItem as string;
-            string rightName = rightComboBox.SelectedItem as string;
+            string leftName = GetLeftSheetName();
+            string rightName = GetRightSheetName();
+            ComboBox target = null;
+            if ( sender == leftComboBox )
+            {
+                target = rightComboBox;
+            }
+            else
+            {
+                target = leftComboBox;
+            }
             compareToolStripButton.Enabled = leftName != currentSheet.left.name || rightName != currentSheet.right.name;
+
+            if (sender == leftComboBox && _sheetDifferences.ContainsKey(leftName))
+            {
+                target.SelectedItem = ((ComboBox)sender).SelectedItem;
+            }
+        }
+
+        private void Copy2Left()
+        {
+            if ( rightGrid.SelectedCells.Count > 0 )
+            {
+                int firstRowIndex = rightGrid.FirstDisplayedScrollingRowIndex;
+                int rowIndex = rightGrid.SelectedCells[0].RowIndex;
+                currentSheet.Copy2Left(rowIndex);
+                VRow row = currentSheet.left.GetRow(rowIndex) as VRow;
+
+                DataTable table = leftGrid.DataSource as DataTable;
+                DataRow dataRow = table.Rows[rowIndex];
+                dataRow.BeginEdit();
+                for ( int i = 0; i < table.Columns.Count; i++ )
+                {
+                    IExcelCell cell = row.GetCell(i);
+                    dataRow[i] = cell != null ? cell.value : string.Empty;
+                }
+                dataRow.EndEdit();
+                table.AcceptChanges();
+
+                rightGrid.FirstDisplayedScrollingRowIndex = firstRowIndex;
+            }
+        }
+
+        private void Copy2Right()
+        {
+            if (leftGrid.SelectedCells.Count > 0)
+            {
+                int firstRowIndex = leftGrid.FirstDisplayedScrollingRowIndex;
+                int rowIndex = leftGrid.SelectedCells[0].RowIndex;
+                currentSheet.Copy2Right(rowIndex);
+                VRow row = currentSheet.right.GetRow(rowIndex) as VRow;
+
+                DataTable table = rightGrid.DataSource as DataTable;
+                DataRow dataRow = table.Rows[rowIndex];
+                dataRow.BeginEdit();
+                for (int i = 0; i < table.Columns.Count; i++)
+                {
+                    IExcelCell cell = row.GetCell(i);
+                    dataRow[i] = cell != null ? cell.value : string.Empty;
+                }
+                dataRow.EndEdit();
+                table.AcceptChanges();
+                leftGrid.FirstDisplayedScrollingRowIndex = firstRowIndex;
+            }
+        }
+
+        private void Save(ExcelWorkbook workbook, VSheet sheet, bool saveAs)
+        {
+            string outputPath = null;
+            if (saveAs)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = FileForm.FILE_FILTER;
+                dialog.Title = "另存为";
+                dialog.FileName = Path.GetFileName(workbook.filePath);
+                dialog.InitialDirectory = Path.GetDirectoryName(workbook.filePath);
+                dialog.FilterIndex = FileForm.GetFilterIndex(workbook.filePath);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    outputPath = dialog.FileName;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                workbook.SaveSheet(sheet, outputPath);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(this, ex.ToString());
+            }
+        }
+
+        private void SaveLeft(bool saveAs = false)
+        {
+            Save(leftWorkbook, currentSheet.left, saveAs);
+        }
+
+        private void SaveRight(bool saveAs = false)
+        {
+            Save(rightWorkbook, currentSheet.right, saveAs);
+        }
+
+        private void OnGridViewFocusEnter(object sender, EventArgs e)
+        {
+            _selectedGrid = GetSource(sender);
+            UpdateCopyButton();
+        }
+
+        private void OnGridViewFocusLeave(object sender, EventArgs e)
+        {
+            UpdateCopyButton();
+        }
+
+        private void OnGridViewContextMenuOpening(object sender, CancelEventArgs e)
+        {
+            alignToolStripMenuItem.Enabled = currentSheet != null;
+            leftToolStripMenuItem.Enabled = _selectedGrid == rightGrid && currentSheet != null;
+            rightToolStripMenuItem.Enabled = _selectedGrid == leftGrid && currentSheet != null;
+        }
+
+        private void OnCopy2LeftClicked(object sender, EventArgs e)
+        {
+            Copy2Left();
+        }
+
+        private void OnCopy2RightClicked(object sender, EventArgs e)
+        {
+            Copy2Right();
+        }
+
+        private void OnCopyButtonClicked(object sender, EventArgs e)
+        {
+            if ( _selectedGrid == leftGrid )
+            {
+                Copy2Right();
+            }
+            else if ( _selectedGrid == rightGrid )
+            {
+                Copy2Left();
+            }
         }
     }
 }

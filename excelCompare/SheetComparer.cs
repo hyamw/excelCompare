@@ -154,13 +154,10 @@ namespace excelCompare
                 RowComparer row = _rows[i];
                 IExcelRow leftRow = _left.GetRow(row.leftRowIndex);
                 IExcelRow rightRow = _right.GetRow(row.rightRowIndex);
-                if (leftRow != null & rightRow != null)
+                if (GetRealRowIndex(leftRow) == -1 && GetRealRowIndex(rightRow) == -1)
                 {
-                    if ( ((VRow)leftRow).realRowIndex == -1 && ((VRow)rightRow).realRowIndex == -1 )
-                    {
-                        deleteList.Add(i);
-                        continue;
-                    }
+                    deleteList.Add(i);
+                    continue;
                 }
                 leftResult.NewRow(leftRow);
                 rightResult.NewRow(rightRow);
@@ -173,6 +170,16 @@ namespace excelCompare
 
             _left = leftResult;
             _right = rightResult;
+        }
+
+        private int GetRealRowIndex(IExcelRow row)
+        {
+            int index = -1;
+            if ( row != null && row is VRow )
+            {
+                index = ((VRow)row).realRowIndex;
+            }
+            return index;
         }
 
         public void Compare(List<Diff> diffs, int leftBeginRowIndex, int rightBeginRowIndex)
@@ -247,6 +254,24 @@ namespace excelCompare
             RowComparer newRow = new RowComparer(_rows.Count, leftRowIndex, rightRowIndex, isDifferent);
             _rows.Add(newRow);
             newRow.CompareCells(_columnCount, left, right);
+        }
+
+        public void Copy2Left(int rowIndex)
+        {
+            VRow leftRow = _left.GetRow(rowIndex) as VRow;
+            VRow rightRow = _right.GetRow(rowIndex) as VRow;
+            leftRow.CopyFrom(rightRow);
+            _rows[rowIndex] = new RowComparer(rowIndex, rowIndex, rowIndex, false);
+            _rows[rowIndex].CompareCells(_columnCount, left, right);
+        }
+
+        public void Copy2Right(int rowIndex)
+        {
+            VRow leftRow = _left.GetRow(rowIndex) as VRow;
+            VRow rightRow = _right.GetRow(rowIndex) as VRow;
+            rightRow.CopyFrom(leftRow);
+            _rows[rowIndex] = new RowComparer(rowIndex, rowIndex, rowIndex, false);
+            _rows[rowIndex].CompareCells(_columnCount, left, right);
         }
 
         protected class Content
