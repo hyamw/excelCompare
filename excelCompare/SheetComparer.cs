@@ -18,7 +18,7 @@ namespace excelCompare
         public const string NEWLINE_PLACE_HOLDER = "=[**]=";
         public const string RETURN_NEWLINE_PLACE_HOLDER = "=[++]=";
 
-        private static readonly string[] SPLIT_SEPERATORS = new string[] { LINE_SPLITTER };
+        private static readonly string[] SPLIT_SEPERATORS = new string[] { LINE_SPLITTER + "\r\n" };
         private Content leftContent = new Content();
         private Content rightContent = new Content();
 
@@ -102,7 +102,7 @@ namespace excelCompare
                     string leftContent = _left.GetContent(beginRow, endRow);
                     string rightContent = _right.GetContent(beginRow, endRow);
                     List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
-                    comparer.diff_cleanupSemanticLossless(diffs);
+                    comparer.diff_cleanupSemantic(diffs);
 
                     Compare(diffs, beginRow, beginRow);
                 }
@@ -115,7 +115,7 @@ namespace excelCompare
                     string leftContent = _left.GetContent(endRow, endRow);
                     string rightContent = _right.GetContent(endRow, endRow);
                     List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
-                    comparer.diff_cleanupSemanticLossless(diffs);
+                    comparer.diff_cleanupSemantic(diffs);
 
                     Compare(diffs, endRow, endRow);
                 }
@@ -128,7 +128,7 @@ namespace excelCompare
                     string leftContent = _left.GetContent(endRow, _left.rowCount - 1);
                     string rightContent = _right.GetContent(endRow, _right.rowCount - 1);
                     List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
-                    comparer.diff_cleanupSemanticLossless(diffs);
+                    comparer.diff_cleanupSemantic(diffs);
 
                     Compare(diffs, endRow, endRow);
                 }
@@ -140,7 +140,7 @@ namespace excelCompare
                 string leftContent = _left.GetContent();
                 string rightContent = _right.GetContent();
                 List<Diff> diffs = comparer.diff_main(leftContent, rightContent, true);
-                comparer.diff_cleanupSemanticLossless(diffs);
+                comparer.diff_cleanupSemantic(diffs);
 
                 Compare(diffs, 0, 0);
             }
@@ -210,6 +210,11 @@ namespace excelCompare
                             rightContent.FinishLine();
                             AddRow(-1, rightBeginRowIndex + rightContent.LineCount - 1, true);
                         }
+                    }
+
+                    if (string.IsNullOrEmpty(line) && lineIndex == lines.Length - 1)
+                    {
+                        break;
                     }
 
                     if (diff.operation == Operation.EQUAL)

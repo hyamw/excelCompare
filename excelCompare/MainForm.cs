@@ -239,11 +239,14 @@ namespace excelCompare
                     saveAsToolStripMenuItem.Text = "另存为(右)";
                 }
             }
-        }
 
-        private void OnSheetSelectedIndexChanged(object sender, EventArgs e)
-        {
-            //LoadSheet(comparer.sheetNames[sheetNamesComboBox.SelectedIndex]);
+            alignToolStripMenuItem.Enabled = currentSheet != null;
+            leftToolStripMenuItem.Enabled = _selectedGrid == rightGrid && currentSheet != null && rightGrid.SelectedRows.Count > 0;
+            rightToolStripMenuItem.Enabled = _selectedGrid == leftGrid && currentSheet != null && leftGrid.SelectedRows.Count > 0;
+            copy2LeftMenuItem.Enabled = leftToolStripMenuItem.Enabled;
+            copy2RightMenuItem.Enabled = rightToolStripMenuItem.Enabled;
+
+            alignMenuItem.Enabled = leftGrid.SelectedCells.Count > 0 || rightGrid.SelectedCells.Count > 0;
         }
 
         private void ClearAlignment()
@@ -277,6 +280,7 @@ namespace excelCompare
             UpdateNextPreviousButton();
             AdjustRowHeaderSize();
             compareToolStripButton.Enabled = false;
+            UpdateGridViewFocus();
         }
 
         private void OnPreviousButtonClicked(object sender, EventArgs e)
@@ -547,35 +551,9 @@ namespace excelCompare
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control)
+            if (e.KeyCode == Keys.Escape)
             {
-                if (e.KeyCode == Keys.P)
-                {
-                    SelectPreviousDifference();
-                }
-                else if (e.KeyCode == Keys.N)
-                {
-                    SelectNextDifference();
-                }
-                else if (e.KeyCode == Keys.L)
-                {
-                    Copy2Left();
-                }
-                else if (e.KeyCode == Keys.R)
-                {
-                    Copy2Right();
-                }
-            }
-            else
-            {
-                if ( e.KeyCode == Keys.F7 )
-                {
-                    PrepareAlignment();
-                }
-                else if ( e.KeyCode == Keys.Escape )
-                {
-                    ClearAlignment();
-                }
+                ClearAlignment();
             }
         }
 
@@ -639,6 +617,7 @@ namespace excelCompare
             }
 
             leftGrid.FirstDisplayedScrollingRowIndex = leftRowIndex;
+            UpdateGridViewFocus();
         }
 
         private void OnCellClicked(object sender, DataGridViewCellEventArgs e)
@@ -729,11 +708,6 @@ namespace excelCompare
             int width = (int)graphics.MeasureString(maxRowIndex.ToString(), leftGrid.Font).Width;
             leftGrid.RowHeadersWidth = width + 35;
             rightGrid.RowHeadersWidth = width + 35;
-        }
-
-        private void OnOperationDropDownOpening(object sender, EventArgs e)
-        {
-            alignMenuItem.Enabled = leftGrid.SelectedCells.Count > 0 || rightGrid.SelectedCells.Count > 0;
         }
 
         private void OnCompareButtonClicked(object sender, EventArgs e)
@@ -918,13 +892,6 @@ namespace excelCompare
         private void OnGridViewFocusLeave(object sender, EventArgs e)
         {
             UpdateGridViewFocus();
-        }
-
-        private void OnGridViewContextMenuOpening(object sender, CancelEventArgs e)
-        {
-            alignToolStripMenuItem.Enabled = currentSheet != null;
-            leftToolStripMenuItem.Enabled = _selectedGrid == rightGrid && currentSheet != null;
-            rightToolStripMenuItem.Enabled = _selectedGrid == leftGrid && currentSheet != null;
         }
 
         private void OnCopy2LeftClicked(object sender, EventArgs e)

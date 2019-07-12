@@ -38,6 +38,8 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.previousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copy2LeftMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copy2RightMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alignMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,6 +114,8 @@
             this.openToolStripMenuItem,
             this.nextToolStripMenuItem,
             this.previousToolStripMenuItem,
+            this.copy2LeftMenuItem,
+            this.copy2RightMenuItem,
             this.alignMenuItem,
             this.toolStripSeparator1,
             this.saveToolStripMenuItem,
@@ -121,7 +125,6 @@
             this.operationToolStripMenuItem.Name = "operationToolStripMenuItem";
             this.operationToolStripMenuItem.Size = new System.Drawing.Size(59, 21);
             this.operationToolStripMenuItem.Text = "操作(&T)";
-            this.operationToolStripMenuItem.DropDownOpening += new System.EventHandler(this.OnOperationDropDownOpening);
             // 
             // openToolStripMenuItem
             // 
@@ -148,6 +151,24 @@
             this.previousToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.previousToolStripMenuItem.Text = "上一个差异";
             this.previousToolStripMenuItem.Click += new System.EventHandler(this.OnPreviousButtonClicked);
+            // 
+            // copy2LeftMenuItem
+            // 
+            this.copy2LeftMenuItem.Enabled = false;
+            this.copy2LeftMenuItem.Name = "copy2LeftMenuItem";
+            this.copy2LeftMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+            this.copy2LeftMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.copy2LeftMenuItem.Text = "复制到左边";
+            this.copy2LeftMenuItem.Click += new System.EventHandler(this.OnCopy2LeftClicked);
+            // 
+            // copy2RightMenuItem
+            // 
+            this.copy2RightMenuItem.Enabled = false;
+            this.copy2RightMenuItem.Name = "copy2RightMenuItem";
+            this.copy2RightMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.copy2RightMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.copy2RightMenuItem.Text = "复制到右边";
+            this.copy2RightMenuItem.Click += new System.EventHandler(this.OnCopy2RightClicked);
             // 
             // alignMenuItem
             // 
@@ -390,7 +411,6 @@
             this.rightToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.OnGridViewContextMenuOpening);
             // 
             // alignToolStripMenuItem
             // 
@@ -611,6 +631,8 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox leftFileTextBox;
         private System.Windows.Forms.TextBox rightFileTextBox;
+        private System.Windows.Forms.ToolStripMenuItem copy2LeftMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copy2RightMenuItem;
     }
 }
 
