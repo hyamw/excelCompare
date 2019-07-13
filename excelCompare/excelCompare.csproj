@@ -63,7 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompareData.cs" />
-    <Compile Include="CustomToolstripRenderer.cs" />
+    <Compile Include="CustomDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DifferenceScrollBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DiffMatchPatch.cs" />
     <Compile Include="ExcelCell.cs" />
     <Compile Include="ExcelRow.cs" />

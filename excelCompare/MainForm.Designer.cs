@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,51 +51,57 @@
             this.previousButton = new System.Windows.Forms.ToolStripButton();
             this.nextButton = new System.Windows.Forms.ToolStripButton();
             this.copyToolstripButton = new System.Windows.Forms.ToolStripButton();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.alignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.leftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.rootSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.topSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftSplitContainer = new System.Windows.Forms.SplitContainer();
             this.panel2 = new System.Windows.Forms.Panel();
             this.leftComboBox = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.leftFileTextBox = new System.Windows.Forms.TextBox();
-            this.leftGrid = new System.Windows.Forms.DataGridView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.alignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.leftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rightSplitContainer = new System.Windows.Forms.SplitContainer();
             this.panel4 = new System.Windows.Forms.Panel();
             this.rightComboBox = new System.Windows.Forms.ComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.rightFileTextBox = new System.Windows.Forms.TextBox();
-            this.rightGrid = new System.Windows.Forms.DataGridView();
             this.rowDiffGrid = new System.Windows.Forms.DataGridView();
+            this.differenceScrollBar = new excelCompare.DifferenceScrollBar();
+            this.leftGrid = new excelCompare.CustomDataGridView();
+            this.rightGrid = new excelCompare.CustomDataGridView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
+            this.mainSplitContainer.Panel1.SuspendLayout();
+            this.mainSplitContainer.Panel2.SuspendLayout();
+            this.mainSplitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rootSplitContainer)).BeginInit();
             this.rootSplitContainer.Panel1.SuspendLayout();
             this.rootSplitContainer.Panel2.SuspendLayout();
             this.rootSplitContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topSplitContainer)).BeginInit();
+            this.topSplitContainer.Panel1.SuspendLayout();
+            this.topSplitContainer.Panel2.SuspendLayout();
+            this.topSplitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.leftSplitContainer)).BeginInit();
             this.leftSplitContainer.Panel1.SuspendLayout();
             this.leftSplitContainer.Panel2.SuspendLayout();
             this.leftSplitContainer.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rightSplitContainer)).BeginInit();
             this.rightSplitContainer.Panel1.SuspendLayout();
             this.rightSplitContainer.Panel2.SuspendLayout();
             this.rightSplitContainer.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -275,134 +281,6 @@
             this.copyToolstripButton.ToolTipText = "复制到左边(Ctrl+L)";
             this.copyToolstripButton.Click += new System.EventHandler(this.OnCopyButtonClicked);
             // 
-            // rootSplitContainer
-            // 
-            this.rootSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rootSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.rootSplitContainer.IsSplitterFixed = true;
-            this.rootSplitContainer.Location = new System.Drawing.Point(0, 50);
-            this.rootSplitContainer.Name = "rootSplitContainer";
-            this.rootSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // rootSplitContainer.Panel1
-            // 
-            this.rootSplitContainer.Panel1.Controls.Add(this.splitContainer1);
-            // 
-            // rootSplitContainer.Panel2
-            // 
-            this.rootSplitContainer.Panel2.Controls.Add(this.rowDiffGrid);
-            this.rootSplitContainer.Size = new System.Drawing.Size(1309, 590);
-            this.rootSplitContainer.SplitterDistance = 500;
-            this.rootSplitContainer.TabIndex = 2;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.leftSplitContainer);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.rightSplitContainer);
-            this.splitContainer1.Size = new System.Drawing.Size(1309, 500);
-            this.splitContainer1.SplitterDistance = 655;
-            this.splitContainer1.TabIndex = 0;
-            // 
-            // leftSplitContainer
-            // 
-            this.leftSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.leftSplitContainer.IsSplitterFixed = true;
-            this.leftSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.leftSplitContainer.Name = "leftSplitContainer";
-            this.leftSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // leftSplitContainer.Panel1
-            // 
-            this.leftSplitContainer.Panel1.Controls.Add(this.panel2);
-            this.leftSplitContainer.Panel1.Controls.Add(this.panel1);
-            this.leftSplitContainer.Panel1MinSize = 20;
-            // 
-            // leftSplitContainer.Panel2
-            // 
-            this.leftSplitContainer.Panel2.Controls.Add(this.leftGrid);
-            this.leftSplitContainer.Size = new System.Drawing.Size(655, 500);
-            this.leftSplitContainer.SplitterDistance = 43;
-            this.leftSplitContainer.TabIndex = 0;
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.leftComboBox);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 22);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(655, 21);
-            this.panel2.TabIndex = 1;
-            // 
-            // leftComboBox
-            // 
-            this.leftComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.leftComboBox.FormattingEnabled = true;
-            this.leftComboBox.Location = new System.Drawing.Point(0, 0);
-            this.leftComboBox.Name = "leftComboBox";
-            this.leftComboBox.Size = new System.Drawing.Size(655, 20);
-            this.leftComboBox.TabIndex = 2;
-            this.leftComboBox.SelectedValueChanged += new System.EventHandler(this.OnSheetSelectionChanged);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.leftFileTextBox);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(655, 22);
-            this.panel1.TabIndex = 0;
-            // 
-            // leftFileTextBox
-            // 
-            this.leftFileTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftFileTextBox.Location = new System.Drawing.Point(0, 0);
-            this.leftFileTextBox.Name = "leftFileTextBox";
-            this.leftFileTextBox.ReadOnly = true;
-            this.leftFileTextBox.Size = new System.Drawing.Size(655, 21);
-            this.leftFileTextBox.TabIndex = 18;
-            // 
-            // leftGrid
-            // 
-            this.leftGrid.AllowUserToAddRows = false;
-            this.leftGrid.AllowUserToDeleteRows = false;
-            this.leftGrid.AllowUserToResizeRows = false;
-            this.leftGrid.BackgroundColor = System.Drawing.Color.White;
-            this.leftGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.leftGrid.ContextMenuStrip = this.contextMenuStrip1;
-            this.leftGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftGrid.Location = new System.Drawing.Point(0, 0);
-            this.leftGrid.Name = "leftGrid";
-            this.leftGrid.ReadOnly = true;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.leftGrid.RowTemplate.Height = 23;
-            this.leftGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.leftGrid.Size = new System.Drawing.Size(655, 453);
-            this.leftGrid.TabIndex = 1;
-            this.leftGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
-            this.leftGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
-            this.leftGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
-            this.leftGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
-            this.leftGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
-            this.leftGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
-            this.leftGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
-            this.leftGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
-            this.leftGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
-            this.leftGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
-            this.leftGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
-            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -433,6 +311,122 @@
             this.rightToolStripMenuItem.Text = "复制到右边(&R)";
             this.rightToolStripMenuItem.Click += new System.EventHandler(this.OnCopy2RightClicked);
             // 
+            // mainSplitContainer
+            // 
+            this.mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.mainSplitContainer.IsSplitterFixed = true;
+            this.mainSplitContainer.Location = new System.Drawing.Point(0, 50);
+            this.mainSplitContainer.Name = "mainSplitContainer";
+            // 
+            // mainSplitContainer.Panel1
+            // 
+            this.mainSplitContainer.Panel1.Controls.Add(this.differenceScrollBar);
+            // 
+            // mainSplitContainer.Panel2
+            // 
+            this.mainSplitContainer.Panel2.Controls.Add(this.rootSplitContainer);
+            this.mainSplitContainer.Size = new System.Drawing.Size(1309, 590);
+            this.mainSplitContainer.SplitterDistance = 52;
+            this.mainSplitContainer.TabIndex = 2;
+            // 
+            // rootSplitContainer
+            // 
+            this.rootSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rootSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.rootSplitContainer.IsSplitterFixed = true;
+            this.rootSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.rootSplitContainer.Name = "rootSplitContainer";
+            this.rootSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // rootSplitContainer.Panel1
+            // 
+            this.rootSplitContainer.Panel1.Controls.Add(this.topSplitContainer);
+            // 
+            // rootSplitContainer.Panel2
+            // 
+            this.rootSplitContainer.Panel2.Controls.Add(this.rowDiffGrid);
+            this.rootSplitContainer.Size = new System.Drawing.Size(1253, 590);
+            this.rootSplitContainer.SplitterDistance = 500;
+            this.rootSplitContainer.TabIndex = 3;
+            // 
+            // topSplitContainer
+            // 
+            this.topSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.topSplitContainer.Name = "topSplitContainer";
+            // 
+            // topSplitContainer.Panel1
+            // 
+            this.topSplitContainer.Panel1.Controls.Add(this.leftSplitContainer);
+            // 
+            // topSplitContainer.Panel2
+            // 
+            this.topSplitContainer.Panel2.Controls.Add(this.rightSplitContainer);
+            this.topSplitContainer.Size = new System.Drawing.Size(1253, 500);
+            this.topSplitContainer.SplitterDistance = 625;
+            this.topSplitContainer.TabIndex = 0;
+            // 
+            // leftSplitContainer
+            // 
+            this.leftSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.leftSplitContainer.IsSplitterFixed = true;
+            this.leftSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.leftSplitContainer.Name = "leftSplitContainer";
+            this.leftSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // leftSplitContainer.Panel1
+            // 
+            this.leftSplitContainer.Panel1.Controls.Add(this.panel2);
+            this.leftSplitContainer.Panel1.Controls.Add(this.panel1);
+            this.leftSplitContainer.Panel1MinSize = 20;
+            // 
+            // leftSplitContainer.Panel2
+            // 
+            this.leftSplitContainer.Panel2.Controls.Add(this.leftGrid);
+            this.leftSplitContainer.Size = new System.Drawing.Size(625, 500);
+            this.leftSplitContainer.SplitterDistance = 43;
+            this.leftSplitContainer.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.leftComboBox);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 22);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(625, 21);
+            this.panel2.TabIndex = 1;
+            // 
+            // leftComboBox
+            // 
+            this.leftComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.leftComboBox.FormattingEnabled = true;
+            this.leftComboBox.Location = new System.Drawing.Point(0, 0);
+            this.leftComboBox.Name = "leftComboBox";
+            this.leftComboBox.Size = new System.Drawing.Size(625, 20);
+            this.leftComboBox.TabIndex = 2;
+            this.leftComboBox.SelectedValueChanged += new System.EventHandler(this.OnSheetSelectionChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.leftFileTextBox);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(625, 22);
+            this.panel1.TabIndex = 0;
+            // 
+            // leftFileTextBox
+            // 
+            this.leftFileTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftFileTextBox.Location = new System.Drawing.Point(0, 0);
+            this.leftFileTextBox.Name = "leftFileTextBox";
+            this.leftFileTextBox.ReadOnly = true;
+            this.leftFileTextBox.Size = new System.Drawing.Size(625, 21);
+            this.leftFileTextBox.TabIndex = 18;
+            // 
             // rightSplitContainer
             // 
             this.rightSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -451,7 +445,7 @@
             // rightSplitContainer.Panel2
             // 
             this.rightSplitContainer.Panel2.Controls.Add(this.rightGrid);
-            this.rightSplitContainer.Size = new System.Drawing.Size(650, 500);
+            this.rightSplitContainer.Size = new System.Drawing.Size(624, 500);
             this.rightSplitContainer.SplitterDistance = 43;
             this.rightSplitContainer.TabIndex = 0;
             // 
@@ -461,7 +455,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(0, 22);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(650, 21);
+            this.panel4.Size = new System.Drawing.Size(624, 21);
             this.panel4.TabIndex = 1;
             // 
             // rightComboBox
@@ -471,7 +465,7 @@
             this.rightComboBox.FormattingEnabled = true;
             this.rightComboBox.Location = new System.Drawing.Point(0, 0);
             this.rightComboBox.Name = "rightComboBox";
-            this.rightComboBox.Size = new System.Drawing.Size(650, 20);
+            this.rightComboBox.Size = new System.Drawing.Size(624, 20);
             this.rightComboBox.TabIndex = 1;
             this.rightComboBox.SelectedValueChanged += new System.EventHandler(this.OnSheetSelectionChanged);
             // 
@@ -481,7 +475,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(650, 22);
+            this.panel3.Size = new System.Drawing.Size(624, 22);
             this.panel3.TabIndex = 0;
             // 
             // rightFileTextBox
@@ -490,39 +484,8 @@
             this.rightFileTextBox.Location = new System.Drawing.Point(0, 0);
             this.rightFileTextBox.Name = "rightFileTextBox";
             this.rightFileTextBox.ReadOnly = true;
-            this.rightFileTextBox.Size = new System.Drawing.Size(650, 21);
+            this.rightFileTextBox.Size = new System.Drawing.Size(624, 21);
             this.rightFileTextBox.TabIndex = 1;
-            // 
-            // rightGrid
-            // 
-            this.rightGrid.AllowUserToAddRows = false;
-            this.rightGrid.AllowUserToDeleteRows = false;
-            this.rightGrid.AllowUserToResizeRows = false;
-            this.rightGrid.BackgroundColor = System.Drawing.Color.White;
-            this.rightGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.rightGrid.ContextMenuStrip = this.contextMenuStrip1;
-            this.rightGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rightGrid.Location = new System.Drawing.Point(0, 0);
-            this.rightGrid.Name = "rightGrid";
-            this.rightGrid.ReadOnly = true;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            this.rightGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.rightGrid.RowTemplate.Height = 23;
-            this.rightGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.rightGrid.Size = new System.Drawing.Size(650, 453);
-            this.rightGrid.TabIndex = 1;
-            this.rightGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
-            this.rightGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
-            this.rightGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
-            this.rightGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
-            this.rightGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
-            this.rightGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
-            this.rightGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
-            this.rightGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
-            this.rightGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
-            this.rightGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
-            this.rightGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
             // 
             // rowDiffGrid
             // 
@@ -542,17 +505,97 @@
             this.rowDiffGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.rowDiffGrid.RowTemplate.Height = 23;
             this.rowDiffGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.rowDiffGrid.Size = new System.Drawing.Size(1309, 86);
+            this.rowDiffGrid.Size = new System.Drawing.Size(1253, 86);
             this.rowDiffGrid.TabIndex = 0;
             this.rowDiffGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnRowGridCellFormatting);
             this.rowDiffGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnRowGridCellPainting);
+            // 
+            // differenceScrollBar
+            // 
+            this.differenceScrollBar.ArrowColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(255)))));
+            this.differenceScrollBar.BackColor = System.Drawing.SystemColors.Control;
+            this.differenceScrollBar.BorderColor = System.Drawing.SystemColors.Control;
+            this.differenceScrollBar.DataSource = null;
+            this.differenceScrollBar.DiffColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.differenceScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.differenceScrollBar.Location = new System.Drawing.Point(0, 0);
+            this.differenceScrollBar.Name = "differenceScrollBar";
+            this.differenceScrollBar.Selection = -1;
+            this.differenceScrollBar.Size = new System.Drawing.Size(52, 590);
+            this.differenceScrollBar.TabIndex = 0;
+            this.differenceScrollBar.Text = "differenceScrollBar1";
+            this.differenceScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnDifferenceScrolled);
+            // 
+            // leftGrid
+            // 
+            this.leftGrid.AllowUserToAddRows = false;
+            this.leftGrid.AllowUserToDeleteRows = false;
+            this.leftGrid.AllowUserToResizeRows = false;
+            this.leftGrid.BackgroundColor = System.Drawing.Color.White;
+            this.leftGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.leftGrid.ContextMenuStrip = this.contextMenuStrip1;
+            this.leftGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftGrid.Location = new System.Drawing.Point(0, 0);
+            this.leftGrid.Name = "leftGrid";
+            this.leftGrid.ReadOnly = true;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
+            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.leftGrid.RowTemplate.Height = 23;
+            this.leftGrid.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.leftGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.leftGrid.Size = new System.Drawing.Size(625, 453);
+            this.leftGrid.TabIndex = 1;
+            this.leftGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
+            this.leftGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
+            this.leftGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
+            this.leftGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
+            this.leftGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
+            this.leftGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
+            this.leftGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
+            this.leftGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
+            this.leftGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
+            this.leftGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
+            this.leftGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
+            // 
+            // rightGrid
+            // 
+            this.rightGrid.AllowUserToAddRows = false;
+            this.rightGrid.AllowUserToDeleteRows = false;
+            this.rightGrid.AllowUserToResizeRows = false;
+            this.rightGrid.BackgroundColor = System.Drawing.Color.White;
+            this.rightGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.rightGrid.ContextMenuStrip = this.contextMenuStrip1;
+            this.rightGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rightGrid.Location = new System.Drawing.Point(0, 0);
+            this.rightGrid.Name = "rightGrid";
+            this.rightGrid.ReadOnly = true;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            this.rightGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.rightGrid.RowTemplate.Height = 23;
+            this.rightGrid.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.rightGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.rightGrid.Size = new System.Drawing.Size(624, 453);
+            this.rightGrid.TabIndex = 1;
+            this.rightGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
+            this.rightGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
+            this.rightGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
+            this.rightGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
+            this.rightGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
+            this.rightGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
+            this.rightGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
+            this.rightGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
+            this.rightGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
+            this.rightGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
+            this.rightGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1309, 640);
-            this.Controls.Add(this.rootSplitContainer);
+            this.Controls.Add(this.mainSplitContainer);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
@@ -563,14 +606,19 @@
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.mainSplitContainer.Panel1.ResumeLayout(false);
+            this.mainSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
+            this.mainSplitContainer.ResumeLayout(false);
             this.rootSplitContainer.Panel1.ResumeLayout(false);
             this.rootSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rootSplitContainer)).EndInit();
             this.rootSplitContainer.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.topSplitContainer.Panel1.ResumeLayout(false);
+            this.topSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.topSplitContainer)).EndInit();
+            this.topSplitContainer.ResumeLayout(false);
             this.leftSplitContainer.Panel1.ResumeLayout(false);
             this.leftSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.leftSplitContainer)).EndInit();
@@ -578,8 +626,6 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.rightSplitContainer.Panel1.ResumeLayout(false);
             this.rightSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rightSplitContainer)).EndInit();
@@ -587,8 +633,9 @@
             this.panel4.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -604,16 +651,9 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton previousButton;
         private System.Windows.Forms.ToolStripButton nextButton;
-        private System.Windows.Forms.SplitContainer rootSplitContainer;
-        private System.Windows.Forms.DataGridView rowDiffGrid;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem alignToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem alignMenuItem;
-        private System.Windows.Forms.SplitContainer leftSplitContainer;
-        private System.Windows.Forms.DataGridView leftGrid;
-        private System.Windows.Forms.SplitContainer rightSplitContainer;
-        private System.Windows.Forms.DataGridView rightGrid;
         private System.Windows.Forms.ToolStripButton compareToolStripButton;
         private System.Windows.Forms.ToolStripButton copyToolstripButton;
         private System.Windows.Forms.ToolStripMenuItem leftToolStripMenuItem;
@@ -623,16 +663,25 @@
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copy2LeftMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copy2RightMenuItem;
+        private System.Windows.Forms.SplitContainer mainSplitContainer;
+        private System.Windows.Forms.SplitContainer rootSplitContainer;
+        private System.Windows.Forms.SplitContainer topSplitContainer;
+        private System.Windows.Forms.SplitContainer leftSplitContainer;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.ComboBox leftComboBox;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox leftFileTextBox;
+        private CustomDataGridView leftGrid;
+        private System.Windows.Forms.SplitContainer rightSplitContainer;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.ComboBox rightComboBox;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.TextBox leftFileTextBox;
         private System.Windows.Forms.TextBox rightFileTextBox;
-        private System.Windows.Forms.ToolStripMenuItem copy2LeftMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copy2RightMenuItem;
+        private CustomDataGridView rightGrid;
+        private System.Windows.Forms.DataGridView rowDiffGrid;
+        private DifferenceScrollBar differenceScrollBar;
     }
 }
 

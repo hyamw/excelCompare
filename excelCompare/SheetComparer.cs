@@ -245,6 +245,29 @@ namespace excelCompare
             return false;
         }
 
+        public DifferentMode GetRowDifference(int rowIndex)
+        {
+            if (rowIndex >= 0 && rowIndex < rowCount)
+            {
+                if ( _rows[rowIndex].isDifferent )
+                {
+                    if (_rows[rowIndex].leftRowIndex == -1 && _rows[rowIndex].rightRowIndex != -1)
+                    {
+                        return DifferentMode.Right;
+                    }
+                    else if (_rows[rowIndex].leftRowIndex != -1 && _rows[rowIndex].rightRowIndex == -1)
+                    {
+                        return DifferentMode.Left;
+                    }
+                    else
+                    {
+                        return DifferentMode.Both;
+                    }
+                }
+            }
+            return DifferentMode.Same;
+        }
+
         public bool IsCellDifferent(int rowIndex, int columnIndex)
         {
             if (rowIndex >= 0 && rowIndex < rowCount && columnIndex >= 0 && columnIndex < columnCount )

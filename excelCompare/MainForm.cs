@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace excelCompare
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IDifferenceAdapter
     {
         private Color DIFF_BACK_COLOR = Color.FromArgb(255, 227, 227);
         private Color DIFF_FORE_COLOR = Color.FromArgb(255, 0, 0);
@@ -65,6 +65,8 @@ namespace excelCompare
                     }
                 }
             }
+
+            differenceScrollBar.DataSource = this;
         }
 
         private void OnCellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -175,6 +177,11 @@ namespace excelCompare
             {
                 target.HorizontalScrollingOffset = source.HorizontalScrollingOffset;
             }
+
+            if ( source == leftGrid )
+            {
+                differenceScrollBar.Value = source.FirstDisplayedScrollingRowIndex;
+            }
         }
 
         private void OnGridViewSelectionChanged(object sender, EventArgs e)
@@ -199,6 +206,10 @@ namespace excelCompare
                 UpdateNextPreviousButton();
             }
             UpdateGridViewFocus();
+            if ( source.CurrentCell != null )
+            {
+                differenceScrollBar.Selection = source.CurrentCell.RowIndex;
+            }
         }
 
         private void UpdateGridViewFocus()
@@ -281,6 +292,8 @@ namespace excelCompare
             AdjustRowHeaderSize();
             compareToolStripButton.Enabled = false;
             UpdateGridViewFocus();
+            differenceScrollBar.ForceUpdate();
+            differenceScrollBar.Selection = -1;
         }
 
         private void OnPreviousButtonClicked(object sender, EventArgs e)
@@ -618,6 +631,7 @@ namespace excelCompare
 
             leftGrid.FirstDisplayedScrollingRowIndex = leftRowIndex;
             UpdateGridViewFocus();
+            differenceScrollBar.ForceUpdate();
         }
 
         private void OnCellClicked(object sender, DataGridViewCellEventArgs e)
@@ -951,6 +965,58 @@ namespace excelCompare
         private void OnExitMenuClicked(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        public int DifferenceCount
+        {
+            get
+            {
+                if ( currentSheet != null )
+                {
+                    return currentSheet.rowCount;
+                }
+                return 0;
+            }
+        }
+
+        public float PageSizeRatio
+        {
+            get
+            {
+                if ( leftGrid.Rows.Count > 0 )
+                {
+                    return (float)GetVisibleRowCount() / (float)leftGrid.Rows.Count;
+                }
+                return (float)leftGrid.Size.Height / (float)leftGrid.PreferredSize.Height;
+            }
+        }
+
+        public DifferentMode GetDifference(int index)
+        {
+            return currentSheet.GetRowDifference(index);
+        }
+
+        private void OnDifferenceScrolled(object sender, ScrollEventArgs e)
+        {
+            leftGrid.FirstDisplayedScrollingRowIndex = Math.Min(leftGrid.Rows.Count - 1, e.NewValue);
+        }
+
+        private int GetVisibleRowCount()
+        {
+            int visibleRowCount = 0;
+            if (leftGrid.GetHorizontalScrollBar().Visible)
+            {
+                visibleRowCount = (int)Math.Floor((leftGrid.Size.Height - leftGrid.GetHorizontalScrollBar().Size.Height + 2) / (float)leftGrid.Rows[0].Cells[0].Size.Height) - 1;
+            }
+            else
+            {
+                visibleRowCount = (int)Math.Floor(leftGrid.Size.Height / (float)leftGrid.Rows[0].Cells[0].Size.Height) - 1;
+            }
+            if (visibleRowCount > leftGrid.Rows.Count)
+            {
+                visibleRowCount = leftGrid.Rows.Count;
+            }
+            return visibleRowCount;
         }
     }
 }
