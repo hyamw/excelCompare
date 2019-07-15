@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.operationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,6 +56,7 @@
             this.leftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.differenceScrollBar = new excelCompare.DifferenceScrollBar();
             this.rootSplitContainer = new System.Windows.Forms.SplitContainer();
             this.topSplitContainer = new System.Windows.Forms.SplitContainer();
             this.leftSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -63,15 +64,14 @@
             this.leftComboBox = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.leftFileTextBox = new System.Windows.Forms.TextBox();
+            this.leftGrid = new excelCompare.CustomDataGridView();
             this.rightSplitContainer = new System.Windows.Forms.SplitContainer();
             this.panel4 = new System.Windows.Forms.Panel();
             this.rightComboBox = new System.Windows.Forms.ComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.rightFileTextBox = new System.Windows.Forms.TextBox();
-            this.rowDiffGrid = new System.Windows.Forms.DataGridView();
-            this.differenceScrollBar = new excelCompare.DifferenceScrollBar();
-            this.leftGrid = new excelCompare.CustomDataGridView();
             this.rightGrid = new excelCompare.CustomDataGridView();
+            this.rowDiffGrid = new System.Windows.Forms.DataGridView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -93,15 +93,15 @@
             this.leftSplitContainer.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rightSplitContainer)).BeginInit();
             this.rightSplitContainer.Panel1.SuspendLayout();
             this.rightSplitContainer.Panel2.SuspendLayout();
             this.rightSplitContainer.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -330,6 +330,23 @@
             this.mainSplitContainer.SplitterDistance = 52;
             this.mainSplitContainer.TabIndex = 2;
             // 
+            // differenceScrollBar
+            // 
+            this.differenceScrollBar.ArrowColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(255)))));
+            this.differenceScrollBar.BackColor = System.Drawing.SystemColors.Control;
+            this.differenceScrollBar.BorderColor = System.Drawing.SystemColors.ButtonShadow;
+            this.differenceScrollBar.BorderShadowColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.differenceScrollBar.DataSource = null;
+            this.differenceScrollBar.DiffColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.differenceScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.differenceScrollBar.Location = new System.Drawing.Point(0, 0);
+            this.differenceScrollBar.Name = "differenceScrollBar";
+            this.differenceScrollBar.Selection = -1;
+            this.differenceScrollBar.Size = new System.Drawing.Size(52, 590);
+            this.differenceScrollBar.TabIndex = 0;
+            this.differenceScrollBar.Text = "differenceScrollBar1";
+            this.differenceScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnDifferenceScrolled);
+            // 
             // rootSplitContainer
             // 
             this.rootSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -427,6 +444,38 @@
             this.leftFileTextBox.Size = new System.Drawing.Size(625, 21);
             this.leftFileTextBox.TabIndex = 18;
             // 
+            // leftGrid
+            // 
+            this.leftGrid.AllowUserToAddRows = false;
+            this.leftGrid.AllowUserToDeleteRows = false;
+            this.leftGrid.AllowUserToResizeRows = false;
+            this.leftGrid.BackgroundColor = System.Drawing.Color.White;
+            this.leftGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.leftGrid.ContextMenuStrip = this.contextMenuStrip1;
+            this.leftGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.leftGrid.Location = new System.Drawing.Point(0, 0);
+            this.leftGrid.Name = "leftGrid";
+            this.leftGrid.ReadOnly = true;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
+            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.leftGrid.RowTemplate.Height = 23;
+            this.leftGrid.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.leftGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.leftGrid.Size = new System.Drawing.Size(625, 453);
+            this.leftGrid.TabIndex = 1;
+            this.leftGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
+            this.leftGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
+            this.leftGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
+            this.leftGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
+            this.leftGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
+            this.leftGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
+            this.leftGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
+            this.leftGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
+            this.leftGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
+            this.leftGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
+            this.leftGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
+            // 
             // rightSplitContainer
             // 
             this.rightSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -487,77 +536,6 @@
             this.rightFileTextBox.Size = new System.Drawing.Size(624, 21);
             this.rightFileTextBox.TabIndex = 1;
             // 
-            // rowDiffGrid
-            // 
-            this.rowDiffGrid.AllowUserToAddRows = false;
-            this.rowDiffGrid.AllowUserToDeleteRows = false;
-            this.rowDiffGrid.AllowUserToResizeRows = false;
-            this.rowDiffGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.rowDiffGrid.BackgroundColor = System.Drawing.Color.White;
-            this.rowDiffGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.rowDiffGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rowDiffGrid.Location = new System.Drawing.Point(0, 0);
-            this.rowDiffGrid.MultiSelect = false;
-            this.rowDiffGrid.Name = "rowDiffGrid";
-            this.rowDiffGrid.RowHeadersVisible = false;
-            this.rowDiffGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.rowDiffGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
-            this.rowDiffGrid.RowTemplate.Height = 23;
-            this.rowDiffGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.rowDiffGrid.Size = new System.Drawing.Size(1253, 86);
-            this.rowDiffGrid.TabIndex = 0;
-            this.rowDiffGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnRowGridCellFormatting);
-            this.rowDiffGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnRowGridCellPainting);
-            // 
-            // differenceScrollBar
-            // 
-            this.differenceScrollBar.ArrowColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(255)))));
-            this.differenceScrollBar.BackColor = System.Drawing.SystemColors.Control;
-            this.differenceScrollBar.BorderColor = System.Drawing.SystemColors.Control;
-            this.differenceScrollBar.DataSource = null;
-            this.differenceScrollBar.DiffColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            this.differenceScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.differenceScrollBar.Location = new System.Drawing.Point(0, 0);
-            this.differenceScrollBar.Name = "differenceScrollBar";
-            this.differenceScrollBar.Selection = -1;
-            this.differenceScrollBar.Size = new System.Drawing.Size(52, 590);
-            this.differenceScrollBar.TabIndex = 0;
-            this.differenceScrollBar.Text = "differenceScrollBar1";
-            this.differenceScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnDifferenceScrolled);
-            // 
-            // leftGrid
-            // 
-            this.leftGrid.AllowUserToAddRows = false;
-            this.leftGrid.AllowUserToDeleteRows = false;
-            this.leftGrid.AllowUserToResizeRows = false;
-            this.leftGrid.BackgroundColor = System.Drawing.Color.White;
-            this.leftGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.leftGrid.ContextMenuStrip = this.contextMenuStrip1;
-            this.leftGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.leftGrid.Location = new System.Drawing.Point(0, 0);
-            this.leftGrid.Name = "leftGrid";
-            this.leftGrid.ReadOnly = true;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.leftGrid.RowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.leftGrid.RowTemplate.Height = 23;
-            this.leftGrid.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.leftGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.leftGrid.Size = new System.Drawing.Size(625, 453);
-            this.leftGrid.TabIndex = 1;
-            this.leftGrid.RowHeadersWidthChanged += new System.EventHandler(this.OnRowHeaderWidthChanged);
-            this.leftGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClicked);
-            this.leftGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnCellFormatting);
-            this.leftGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseDown);
-            this.leftGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
-            this.leftGrid.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.OnColumnWidthChanged);
-            this.leftGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.OnRowStateChanged);
-            this.leftGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OnGridViewScroll);
-            this.leftGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
-            this.leftGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
-            this.leftGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
-            // 
             // rightGrid
             // 
             this.rightGrid.AllowUserToAddRows = false;
@@ -589,6 +567,29 @@
             this.rightGrid.SelectionChanged += new System.EventHandler(this.OnGridViewSelectionChanged);
             this.rightGrid.Enter += new System.EventHandler(this.OnGridViewFocusEnter);
             this.rightGrid.Leave += new System.EventHandler(this.OnGridViewFocusLeave);
+            // 
+            // rowDiffGrid
+            // 
+            this.rowDiffGrid.AllowUserToAddRows = false;
+            this.rowDiffGrid.AllowUserToDeleteRows = false;
+            this.rowDiffGrid.AllowUserToResizeRows = false;
+            this.rowDiffGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.rowDiffGrid.BackgroundColor = System.Drawing.Color.White;
+            this.rowDiffGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.rowDiffGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rowDiffGrid.Location = new System.Drawing.Point(0, 0);
+            this.rowDiffGrid.MultiSelect = false;
+            this.rowDiffGrid.Name = "rowDiffGrid";
+            this.rowDiffGrid.RowHeadersVisible = false;
+            this.rowDiffGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.rowDiffGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            this.rowDiffGrid.RowTemplate.Height = 23;
+            this.rowDiffGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.rowDiffGrid.Size = new System.Drawing.Size(1253, 86);
+            this.rowDiffGrid.TabIndex = 0;
+            this.rowDiffGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.OnRowGridCellFormatting);
+            this.rowDiffGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnRowGridCellPainting);
             // 
             // MainForm
             // 
@@ -626,6 +627,7 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).EndInit();
             this.rightSplitContainer.Panel1.ResumeLayout(false);
             this.rightSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rightSplitContainer)).EndInit();
@@ -633,9 +635,8 @@
             this.panel4.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.leftGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rightGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rowDiffGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

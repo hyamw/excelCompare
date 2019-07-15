@@ -95,7 +95,7 @@ namespace excelCompare
         /// <summary>
         /// The border color in disabled state.
         /// </summary>
-        private Color disabledBorderColor = Color.Gray;
+        private Color borderShadowColor = Color.Gray;
 
         /// <summary>
         /// Color for the 
@@ -232,21 +232,21 @@ namespace excelCompare
         }
 
         /// <summary>
-        /// Gets or sets the border color in disabled state.
+        /// Gets or sets the border shadow color.
         /// </summary>
         [Category("Appearance")]
-        [Description("Gets or sets the border color in disabled state.")]
+        [Description("Gets or sets the border shadow color")]
         [DefaultValue(typeof(Color), "Gray")]
-        public Color DisabledBorderColor
+        public Color BorderShadowColor
         {
             get
             {
-                return this.disabledBorderColor;
+                return this.borderShadowColor;
             }
 
             set
             {
-                this.disabledBorderColor = value;
+                this.borderShadowColor = value;
 
                 this.Invalidate();
             }
@@ -313,19 +313,20 @@ namespace excelCompare
 
         Rectangle GetFrameRectangle()
         {
+            Size clientSize = GetClientSize();
             int frameLeft = ClientRectangle.Left + ARROW_WIDTH;
             int frameRight = ClientRectangle.Right - 3;
 
             int frameTop = FRAME_PADDING;
             int frameHeight = GetThumbSize();
 
-            int diffBottom = ClientRectangle.Height - 1 - DIFF_PADDING;
+            int frameBottom = clientSize.Height  - FRAME_PADDING;
             if (GetDataCount() > 0)
             {
-                frameTop = FRAME_PADDING + (int)((ClientRectangle.Height - 2 * DIFF_PADDING) * (float)value / (float)GetDataCount());
-                if (frameTop + frameHeight >= diffBottom)
+                frameTop = FRAME_PADDING + (int)((clientSize.Height - 2 * DIFF_PADDING) * (float)value / (float)GetDataCount());
+                if (frameTop + frameHeight >= frameBottom)
                 {
-                    frameTop = diffBottom - frameHeight;
+                    frameTop = frameBottom - frameHeight;
                 }
             }
             return new Rectangle(frameLeft, frameTop, frameRight - frameLeft, frameHeight);
@@ -333,13 +334,33 @@ namespace excelCompare
 
         Rectangle GetDiffRectangle()
         {
+            Size clientSize = GetClientSize();
             int frameLeft = ClientRectangle.Left + ARROW_WIDTH;
             int frameRight = ClientRectangle.Right - 3;
 
             int diffLeft = frameLeft + 5;
             int diffRight = frameRight - 5;
 
-            return new Rectangle(diffLeft, DIFF_PADDING, diffRight - diffLeft + 1, ClientRectangle.Height - 2 * DIFF_PADDING);
+            return new Rectangle(diffLeft, DIFF_PADDING, diffRight - diffLeft + 1, clientSize.Height - 2 * DIFF_PADDING);
+        }
+
+        private Size GetClientSize()
+        {
+            Size size = new Size(ClientRectangle.Width, 2 * DIFF_PADDING + 1);
+            int dataCount = GetDataCount();
+            if (dataCount > 0)
+            {
+                int minHeight = ClientRectangle.Height - 2 * DIFF_PADDING;
+                if (dataCount < minHeight)
+                {
+                    size.Height = dataCount + 2 * DIFF_PADDING;
+                }
+                else
+                {
+                    size.Height = ClientRectangle.Height;
+                }
+            }
+            return size;
         }
 
         protected void RefreshDifferenceImage()
@@ -430,6 +451,18 @@ namespace excelCompare
                 RefreshDifferenceImage();
             }
             e.Graphics.DrawImage(differenceImage, diffRectangle, new Rectangle(0, 0, differenceImage.Width, differenceImage.Height), GraphicsUnit.Pixel);
+
+            // Inner frame
+            using (Pen pen = new Pen(borderColor, 1))
+            {
+                e.Graphics.DrawLine(pen, diffRectangle.Left, diffRectangle.Top - 1, diffRectangle.Right, diffRectangle.Top - 1);
+                e.Graphics.DrawLine(pen, diffRectangle.Left, diffRectangle.Top - 1, diffRectangle.Left, diffRectangle.Bottom + 1);
+            }
+            using (Pen pen = new Pen(borderShadowColor, 1))
+            {
+                e.Graphics.DrawLine(pen, diffRectangle.Left, diffRectangle.Bottom + 1, diffRectangle.Right, diffRectangle.Bottom + 1);
+                e.Graphics.DrawLine(pen, diffRectangle.Right, diffRectangle.Top - 1, diffRectangle.Right, diffRectangle.Bottom + 1);
+            }
 
             // Thumb frame
             Rectangle frameRectangle = GetFrameRectangle();
@@ -608,6 +641,7 @@ namespace excelCompare
         {
             base.OnSizeChanged(e);
             this.SetUpScrollBar();
+            differenceImage = null;
         }
 
         /// <summary>
@@ -682,9 +716,10 @@ namespace excelCompare
         /// <returns>The height of the thumb.</returns>
         private int GetThumbSize()
         {
+            Size clientSize = GetClientSize();
             int trackSize =
             this.orientation == ScrollBarOrientation.Vertical ?
-            this.Height - 2 * FRAME_PADDING : this.Width - 2 * FRAME_PADDING;
+            clientSize.Height - 2 * FRAME_PADDING : clientSize.Width - 2 * FRAME_PADDING;
 
             if (GetDataCount() == 0)
             {
