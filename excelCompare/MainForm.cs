@@ -336,6 +336,7 @@ namespace excelCompare
             ShowLineDifference(rowIndex);
 
             UpdateNextPreviousButton();
+            differenceScrollBar.Selection = rowIndex;
         }
 
         int GetCurrentRowIndex()
