@@ -214,7 +214,10 @@ namespace excelCompare
                     }
                     else
                     {
-                        sheet.ShiftRows(realRowIndex, sheet.LastRowNum, 1, true, false);
+                        if (realRowIndex <= sheet.LastRowNum)
+                        {
+                            sheet.ShiftRows(realRowIndex, sheet.LastRowNum, 1, true, false);
+                        }
                         sheetRow = sheet.CreateRow(realRowIndex);
                         //sheetRow = sheet.GetRow(realRowIndex);
                     }
@@ -230,7 +233,7 @@ namespace excelCompare
                             {
                                 sheetCell = sheetRow.CreateCell(columnIndex);
                             }
-                            sheetCell.SetCellValue(cell.value);
+                            //sheetCell.SetCellValue(cell.value);
                         }
                         else
                         {

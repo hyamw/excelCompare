@@ -465,8 +465,9 @@ namespace excelCompare
             }
 
             // Thumb frame
+            Color newColor = Color.FromArgb(128, thumbColor);
             Rectangle frameRectangle = GetFrameRectangle();
-            using (Pen pen = new Pen(thumbColor, 1))
+            using (Pen pen = new Pen(newColor, 1))
             {
                 e.Graphics.DrawRectangle(pen, frameRectangle.Left, frameRectangle.Top, frameRectangle.Width, frameRectangle.Height);
             }
@@ -525,7 +526,12 @@ namespace excelCompare
             Point mouseLocation = Point.Empty;
             GetCursorPos(ref mouseLocation);
             mouseLocation = PointToClient(mouseLocation);
-            float ratio = (float)(mouseLocation.Y - 1) / (float)(ClientRectangle.Height - 2);
+            Size clientSize = GetClientSize();
+            float ratio = (float)(mouseLocation.Y - 1) / (float)(clientSize.Height - 2);
+            if (ratio > 1)
+            {
+                ratio = 1;
+            }
             if (GetDataCount() > 0)
             {
                 int newValue = (int)(ratio * GetDataCount());

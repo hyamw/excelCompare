@@ -52,6 +52,7 @@ namespace excelCompare
 
         private int GetSheetColumnCount(ISheet sheet)
         {
+            IFormulaEvaluator evaluator = sheet.Workbook.GetCreationHelper().CreateFormulaEvaluator();
             int cellNum = 0;
             for (int rowIndex = sheet.FirstRowNum; rowIndex <= sheet.LastRowNum; rowIndex++)
             {
@@ -61,9 +62,19 @@ namespace excelCompare
                     continue;
                 }
                 int lastColumn = sheet.GetRow(rowIndex).LastCellNum;
-                if (lastColumn > cellNum)
+                int columnCount = lastColumn;
+                for ( int columnIndex = lastColumn - 1; columnIndex >= 0; columnIndex-- )
                 {
-                    cellNum = lastColumn;
+                    ICell cell = row.GetCell(columnIndex);
+                    if (cell != null && cell.CellType != CellType.Blank )
+                    {
+                        columnCount = columnIndex + 1;
+                        break;
+                    }
+                }
+                if (columnCount > cellNum)
+                {
+                    cellNum = columnCount;
                 }
             }
             return cellNum;
@@ -94,7 +105,7 @@ namespace excelCompare
                 {
                     try
                     {
-                        return evaluator.Evaluate(cell).FormatAsString();
+                        return evaluator.Evaluate(cell).StringValue;
                     }
                     catch(Exception)
                     {
@@ -145,6 +156,14 @@ namespace excelCompare
                     }
                 }
                 _rows.Add(newRow);
+            }
+
+            for ( int i = _rows.Count - 1; i >= 0; i-- )
+            {
+                if (_rows[i].isEmpty)
+                {
+                    _rows.RemoveAt(i);
+                }
             }
             return success;
         }

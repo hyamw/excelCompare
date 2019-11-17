@@ -110,7 +110,7 @@ namespace excelCompare
             {
                 outputPath = _filePath;
             }
-            using (FileStream fs = File.OpenWrite(outputPath))
+            using (FileStream fs = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
             {
                 workbook.Write(fs);
             }

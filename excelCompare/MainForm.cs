@@ -306,7 +306,7 @@ namespace excelCompare
             int rowIndex = GetPreviousDifferenctRowIndex();
             if (rowIndex != -1)
             {
-                JumToRow(rowIndex);
+                JumpToRow(rowIndex);
             }
         }
 
@@ -320,11 +320,11 @@ namespace excelCompare
             int rowIndex = GetNextDifferenctRowIndex();
             if (rowIndex != -1)
             {
-                JumToRow(rowIndex);
+                JumpToRow(rowIndex);
             }
         }
 
-        private void JumToRow(int rowIndex)
+        private void JumpToRow(int rowIndex)
         {
             stopUpdate = true;
             leftGrid.ClearSelection();
@@ -623,7 +623,7 @@ namespace excelCompare
 
             if (visibleRow != -1)
             {
-                JumToRow(visibleRow);
+                JumpToRow(visibleRow);
             }
             else
             {

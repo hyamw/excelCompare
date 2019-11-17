@@ -28,6 +28,21 @@ namespace excelCompare
             }
         }
 
+        public bool isEmpty
+        {
+            get
+            {
+                for ( int i = 0; i < _columns.Count; i++ )
+                {
+                    if (!string.IsNullOrEmpty(_columns[i].value))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         public ExcelRow(ExcelSheet sheet, int rowIndex)
         {
             _sheet = sheet;
