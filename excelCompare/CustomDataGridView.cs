@@ -59,7 +59,10 @@ namespace excelCompare
                                 {
                                     verticalWheelDelta -= (int)((float)deltaRows * (120f / (float)mouseWheelScrollLines));
                                 }
-                                FirstDisplayedScrollingRowIndex = finalValue;
+                                if (finalValue >= 0 && finalValue < Rows.Count)
+                                {
+                                    FirstDisplayedScrollingRowIndex = finalValue;
+                                }
                             }
                             else
                             {
@@ -73,7 +76,10 @@ namespace excelCompare
                                 {
                                     verticalWheelDelta -= (int)((float)deltaRows * (120f / (float)mouseWheelScrollLines));
                                 }
-                                FirstDisplayedScrollingRowIndex = finalValue;
+                                if (finalValue >= 0 && finalValue < Rows.Count)
+                                {
+                                    FirstDisplayedScrollingRowIndex = finalValue;
+                                }
                             }
                         }
                     }

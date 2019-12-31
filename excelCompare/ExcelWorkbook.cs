@@ -38,27 +38,13 @@ namespace excelCompare
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 _filePath = filePath;
-                if (filePath.Last() == 's')
+                try
                 {
-                    try
-                    {
-                        workbook = new HSSFWorkbook(fs);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
+                    workbook = WorkbookFactory.Create(fs);
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        workbook = new XSSFWorkbook(fs);
-                    }
-                    catch (Exception)
-                    {
-                        workbook = new HSSFWorkbook(fs);
-                    }
+                    throw ex;
                 }
             }
 

@@ -233,7 +233,10 @@ namespace excelCompare
                             {
                                 sheetCell = sheetRow.CreateCell(columnIndex);
                             }
-                            //sheetCell.SetCellValue(cell.value);
+                            if (sheetCell != null)
+                            {
+                                sheetCell.SetCellValue(cell.value);
+                            }
                         }
                         else
                         {
